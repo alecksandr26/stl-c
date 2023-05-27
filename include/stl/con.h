@@ -46,10 +46,10 @@ typedef struct {
 	con.st_size = sizeof(st)					\
 		
 #define STL_INIT_D_CONTAINER_CAPACITY(con)				\
-	con.capacity = stl_init_con_capacity((void *) con.container,	\
+	con.capacity = stl_init_con_capacity((unsigned char *) con.container, \
 					     sizeof(con.container),	\
 					     con.dtype_size)
 
-extern size_t stl_init_con_capacity(void *container, size_t static_container_size, size_t dtype_size);
+extern size_t stl_init_con_capacity(unsigned char *container, size_t static_container_size, size_t dtype_size);
 
 #endif
