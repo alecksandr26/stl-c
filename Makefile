@@ -101,7 +101,7 @@ test: $(TESTRUNNER)
 # To do profiling
 
 # Compile the profiling tests
-$(TEST_PROFILE_DIR)/profile_%.out: $(SRC_DIR)/profile_%.c $(LIBS) | $(TEST_PROFILE_DIR)
+$(TEST_PROFILE_DIR)/profile_%.out: $(TEST_DIR)/profile_%.c $(LIBS) | $(TEST_PROFILE_DIR)
 	@echo Compiling: $^ -o $@
 	@$(C) $(C_FLAGS) -pg $(filter-out $(TEST_PROFILE_DIR), $^) -o $@ $(C_FLAGS_LIBS)
 

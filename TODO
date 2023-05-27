@@ -2,3 +2,4 @@
 - Create a way to track each address from the memory allocation [ ]
 - Start creating the queue data structure [ ]
 - Create the tests for the stack structure [ ]
+- Work on the idea of a general allocator for any structure type [ ]

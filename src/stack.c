@@ -53,6 +53,10 @@ unsigned char *stl_dstack_inc(__stl_stack_t *stack)
 
 unsigned char *stl_dstack_dec(__stl_stack_t *stack)
 {
+
+	if (stack->head == 0)
+		throw_except(EmptyStructure);
+	
 	if (stack->head <= stack->con.capacity / STL_DEFAULT_DSTACK_INCREASE_RATE) {
 		stl_realloc_container((unsigned char *) stack,
 				      sizeof(*stack),
