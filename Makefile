@@ -40,11 +40,10 @@ BIN_EXAMPLE_DIR = $(addprefix $(EXAMPLE_DIR)/, bin)
 PROFILES = $(addprefix $(TEST_PROFILE_DIR)/, profile_stack.out)
 
 OBJS = $(addprefix $(OBJ_DIR)/, 	\
+				mem.o   \
+				con.o   \
 				stack.o)
-#				mem.o   \
-#				con.o   \
-#				tmap.o)
-#				queue.o 
+
 
 EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, example_stack.out)
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
