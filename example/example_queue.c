@@ -28,7 +28,6 @@ void print_attributes_dqueue(dqueue(d_ptr(float)) *dqueue)
 {
 	printf("size: %zu\n", queue_size(*dqueue)); 
  	printf("capacity: %zu\n", queue_capacity(*dqueue));
-	printf("dtype: %zu\n", dqueue->con.dtype_size); 
  	printf("rear: %i\n", dqueue->rear); 
  	printf("front: %i\n", dqueue->front);
 }
@@ -140,26 +139,57 @@ void example_abstra_data_types_ptr(void)
 }
 
 
-int main() 
+void example_dqueue_ptr_float(void)
 {
-	dqueue(d_ptr(float)) *dqueue = new_dqueue(d_ptr(float), 1);
+	dqueue(d_ptr(float)) *dqueue = new_dqueue(d_ptr(float));
 	dqueue_init(dqueue);
 
-	print_attributes_dqueue(dqueue);
-
-	float var = 1.0, var2 = 2.0, var3 = 3.0, var4 = 4.0;
+	float var = 1.0, var2 = 2.0, var3 = 3.0, var4 = 4.0, var5 = 5.0;
 	
 	dqueue_push(dqueue, &var);
 	dqueue_push(dqueue, &var2);
 	dqueue_push(dqueue, &var3);
 	dqueue_push(dqueue, &var4);
+	dqueue_push(dqueue, &var5);
+	
+	(void) dqueue_pop(dqueue);
+	(void) dqueue_pop(dqueue);
+	(void) dqueue_pop(dqueue);
+	
+	print_attributes_dqueue(dqueue);
+
+	printf("%f\n", *dqueue_front(dqueue));
+	printf("%f\n", *dqueue_back(dqueue));
+
+	printf("%f\n", *dqueue_pop(dqueue));
+	
+	print_attributes_dqueue(dqueue);
+	
+	printf("%f\n", *dqueue_front(dqueue));
+	printf("%f\n", *dqueue_back(dqueue));
+
+	(void) dqueue_pop(dqueue);
+	
+	dqueue_push(dqueue, &var);
+	dqueue_push(dqueue, &var2);
+
+	dqueue_push(dqueue, &var3);
 
 	print_attributes_dqueue(dqueue);
 
-	printf("%f\n", *queue_front(*dqueue));
-	printf("%f\n", *queue_back(*dqueue));
+
+	printf("%f\n", *dqueue_front(dqueue));
+	printf("%f\n", *dqueue_back(dqueue));
+	
 		
 	stl_free(dqueue);
+}
+
+
+int main() 
+{
+
+	
 	
 	return 0;
 }

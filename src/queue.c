@@ -84,22 +84,35 @@ unsigned char *stl_dqueue_inc(__stl_queue_t *dqueue)
 			size_t min = MIN((size_t) dqueue->rear, dqueue->con.capacity - dqueue->front);
 			size_t max = MAX((size_t) dqueue->rear, dqueue->con.capacity - dqueue->front);
 			
-			unsigned char temp_buff[min];
+
 			unsigned char *min_addr = ((size_t) dqueue->rear 
+						   > dqueue->con.capacity - dqueue->front)
+				? dqueue->con.container + (dqueue->rear * dqueue->con.dtype_size)
+				: dqueue->con.container;
+
+			unsigned char *max_addr = ((size_t) dqueue->rear
 						   > dqueue->con.capacity - dqueue->front)
 				? dqueue->con.container
 				: dqueue->con.container + (dqueue->rear * dqueue->con.dtype_size);
 
-			unsigned char *max_addr = ((size_t) dqueue->rear
-						   > dqueue->con.capacity - dqueue->front)
-				? dqueue->con.container + (dqueue->rear * dqueue->con.dtype_size)
-				: dqueue->con.container;
-			
-			/* Swap the pieces */
-			memcpy(temp_buff, min_addr, min);
-			memcpy(dqueue->con.container, max_addr, max);
-			memcpy(max_addr, temp_buff, min);
+			/* Dump the smallest piece in the buffer */
+			unsigned char temp_buff[min * dqueue->con.dtype_size];
+			memcpy(temp_buff, min_addr, min * dqueue->con.dtype_size);
 
+			if (min == (size_t) dqueue->rear) {
+				memcpy(dqueue->con.container, max_addr,
+				       max * dqueue->con.dtype_size); /* front piece */
+				memcpy(dqueue->con.container /* rear piece */
+				       + (max * dqueue->con.dtype_size), temp_buff,
+				       min * dqueue->con.dtype_size);
+			} else {
+				for (int i = dqueue->rear - 1; i > -1; i--)
+					memcpy(dqueue->con.container + ((i + min) * dqueue->con.dtype_size),
+					       dqueue->con.container + (i * dqueue->con.dtype_size),
+					       dqueue->con.dtype_size); /* rear piece */
+				memcpy(dqueue->con.container, min_addr,
+				       min * dqueue->con.dtype_size); /* front piece */
+			}
 			dqueue->front = 0;
 			dqueue->rear = dqueue->con.capacity;
 		}
@@ -114,21 +127,66 @@ unsigned char *stl_dqueue_inc(__stl_queue_t *dqueue)
 }
 
 
-unsigned char *stl_dqueue_dec(__stl_queue_t *queue)
+unsigned char *stl_dqueue_dec(__stl_queue_t *dqueue)
 {
-	assert(queue != NULL && "Can't be null");
+	assert(dqueue != NULL && "Can't be null");
 	
-	if (queue_size(*queue) == 0)
+	if (queue_size(*dqueue) == 0)
 		throw_except(EmptyStructure);
 
-	const size_t front = (size_t) queue->front;
+	if (dqueue->size <= dqueue->con.capacity / STL_DEFAULT_DQUEUE_INCREASE_RATE) {
+		if (dqueue->front <= dqueue->rear) {
+			memcpy(dqueue->con.container, dqueue->con.container
+			       + (dqueue->front * dqueue->con.dtype_size),
+			       dqueue->size * dqueue->con.dtype_size);
+		} else {
+			size_t min = MIN((size_t) dqueue->rear + 1, dqueue->size - dqueue->front);
+			size_t max = MAX((size_t) dqueue->rear + 1, dqueue->size - dqueue->front);
+			unsigned char *min_addr = ((size_t) dqueue->rear + 1
+						   > dqueue->con.capacity - dqueue->front)
+				? dqueue->con.container + (dqueue->rear * dqueue->con.dtype_size)
+				: dqueue->con.container;
 
-	if (queue->front == queue->rear)
-		queue->front = queue->rear = -1;
+			unsigned char *max_addr = ((size_t) dqueue->rear + 1
+						   > dqueue->con.capacity - dqueue->front)
+				? dqueue->con.container
+				: dqueue->con.container + (dqueue->rear * dqueue->con.dtype_size);
+			
+			unsigned char temp_buff[min * dqueue->con.dtype_size];
+			memcpy(temp_buff, min_addr, min * dqueue->con.dtype_size);
+
+			if (min == (size_t) dqueue->rear + 1) {
+				memcpy(dqueue->con.container, max_addr,
+				       max * dqueue->con.dtype_size); /* front piece */
+				memcpy(dqueue->con.container /* rear piece */
+				       + (max * dqueue->con.dtype_size), temp_buff,
+				       min * dqueue->con.dtype_size);
+			} else {
+				for (int i = dqueue->rear - 1; i > -1; i--)
+					memcpy(dqueue->con.container + ((i + min) * dqueue->con.dtype_size),
+					       dqueue->con.container + (i * dqueue->con.dtype_size),
+					       dqueue->con.dtype_size); /* rear piece */
+				memcpy(dqueue->con.container, min_addr,
+				       min * dqueue->con.dtype_size); /* front piece */
+			}
+			
+		}
+		dqueue->front = 0;
+		dqueue->rear = dqueue->size - 1;
+		stl_realloc_container((unsigned char *) dqueue,
+				      sizeof(*dqueue),
+				      dqueue->size * dqueue->con.dtype_size);
+		STL_INIT_D_CONTAINER_CAPACITY(dqueue->con);
+	}
+
+	const size_t front = (size_t) dqueue->front;
+
+	if (dqueue->front == dqueue->rear)
+		dqueue->front = dqueue->rear = -1;
 	else
-		queue->front = (queue->front + 1) % queue_capacity(*queue);
-	
-	queue->size--;
-	return queue->con.container + (front * queue->con.dtype_size);
+		dqueue->front = (dqueue->front + 1) % queue_capacity(*dqueue);
+
+	dqueue->size--;
+	return dqueue->con.container + (front * dqueue->con.dtype_size);
 }
 
