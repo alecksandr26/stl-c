@@ -5,7 +5,7 @@
   dynamic memory for variable-size data structures.
 
   @author Erick Carrillo.
-  @copyright Copyright (C) 2022, Erick Alejandro Carrillo López, All rights reserved.
+  @copyright Copyright (C) 2023, Erick Alejandro Carrillo López, All rights reserved.
   @license This project is released under the MIT License
 */
 
@@ -13,6 +13,7 @@
 #define STL_CON_INCLUDED
 
 #include <stddef.h>
+#include "def.h"
 
 #define STL_DEFAULT_CONTAINER_CAPACITY 1024
 #define STL_DEFAULT_DCONTAINER_CAPACITY 1024
@@ -27,16 +28,20 @@ typedef struct {
 
 #define __STL_CONTAINER_SELECT_SIZE(X, ...) X
 #define __STL_IS_DYNAMIC_CONTAINER(X) (((unsigned long) X) < stl_heapaddr)
-#define STL_CONTAINER(dtype, dcapacity, ...)				\
+#define STL_CONTAINER(cond, dtype, dcapacity, ...)			\
 	struct  {							\
 		size_t capacity, dtype_size, st_size;				\
-		dtype  container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) dcapacity)]; \
+		__STL_IF_ELSE(cond)					\
+		     (dtype *container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) dcapacity)]) \
+		     (dtype container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) dcapacity)]); \
 	}
 
-#define STL_DCONTAINER(dtype)						\
+#define STL_DCONTAINER(cond, dtype)					\
 	struct  {							\
 		size_t capacity, dtype_size, st_size;			\
-		dtype  *container;					\
+		__STL_IF_ELSE(cond)					\
+		     (dtype **container)				\
+		     (dtype *container);				\
 	}
 
 #define STL_INIT_D_CONTAINER_DTYPE_SIZE(con, dtype)	\
@@ -49,6 +54,9 @@ typedef struct {
 	con.capacity = stl_init_con_capacity((unsigned char *) con.container, \
 					     sizeof(con.container),	\
 					     con.dtype_size)
+
+#define STL_CONTAINER_CAPACITY(con)		\
+	con.capacity
 
 extern size_t stl_init_con_capacity(unsigned char *container, size_t static_container_size, size_t dtype_size);
 

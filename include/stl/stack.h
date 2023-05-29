@@ -79,16 +79,7 @@ typedef struct {
 #define dstack_empty(dstack) stack_empty(*dstack)
 #define dstack_capacity(dstack) stack_capacity(*dstack)
 
-#define dstack_inc(dstack, new_capacity)						\
-	do {								\
-		stl_realloc_container((unsigned char *) dstack,		\
-				   sizeof(*dstack),			\
-				   sizeof(dstack->con.container[0])	\
-				      * new_capacity);			\
-		STL_INIT_D_CONTAINER_CAPACITY(dstack->con);			\
-	} while (0)
-
-extern Except NotEnoughCapacity, EmptyStructure;
+extern Except NotEnoughCapacityAtStructure, EmptyStructure;
 extern size_t stl_stack_inc(__stl_stack_t *stack);
 extern size_t stl_stack_dec(__stl_stack_t *stack);
 extern size_t stl_stack_top(__stl_stack_t *stack);

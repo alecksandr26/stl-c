@@ -14,9 +14,9 @@
 #ifndef STL_INCLUDED
 #define STL_INCLUDED
 
+#include "stl/ex.h"
 #include "stl/stack.h"
-
-
+#include "stl/queue.h"
 
 #endif
 

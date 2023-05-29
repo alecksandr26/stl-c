@@ -3,9 +3,7 @@
 #include <string.h>
 #include <except.h>
 
-Except NotEnoughMemory = {"NotEnoughMemory: Not enough memory for a new structure allocation"};
-Except NotEnoughMemoryToRealloc =					\
-	{"NotEnoughMemoryToRealloc: Not enough memory for a reallocation of the container"};
+#include "../include/stl/ex.h"
 
 unsigned long stl_heapaddr = 0;
 

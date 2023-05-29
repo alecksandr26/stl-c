@@ -4,9 +4,7 @@
 #include "../include/stl/mem.h"
 #include "../include/stl/con.h"
 #include "../include/stl/stack.h"
-
-Except NotEnoughCapacity = {"NotEnoughCapacity: Not enough capacity at the structure"};
-Except EmptyStructure = {"EmptyStructure: The structure doesn't have any element"};
+#include "../include/stl/ex.h"
 
 size_t stl_stack_inc(__stl_stack_t *stack)
 {
