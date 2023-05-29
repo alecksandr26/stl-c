@@ -42,7 +42,7 @@
 
 #define __STL_IS_PTR_1 __STL_PROBE()
 
-#define stl_ptr(dtype) 1, dtype
+#define d_ptr(dtype) 1, dtype
 
 #endif
 

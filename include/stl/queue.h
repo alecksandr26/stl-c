@@ -113,10 +113,16 @@ typedef struct {
 	(queue).con.container[stl_queue_dec((__stl_queue_t *) &(queue))]
 
 #define dqueue_init(dqueue, ...) queue_init(*dqueue __VA_OPT__(,) __VA_ARGS__)
+#define dqueue_empty(queue) queue_size(*dqueue)
+#define dqueue_capacity(queue) queue_capacity(*dqueue)
+#define dqueue_push(dqueue, item) \
+	*((typeof(dqueue->con.container[0]) *) stl_dqueue_inc((__stl_queue_t *) dqueue)) = item
 
 extern size_t stl_queue_inc(__stl_queue_t *queue);
 extern size_t stl_queue_dec(__stl_queue_t *queue);
 extern size_t stl_queue_front(__stl_queue_t *queue);
 extern size_t stl_queue_back(__stl_queue_t *queue);
+extern unsigned char *stl_dqueue_inc(__stl_queue_t *stack);
+extern unsigned char *stl_dqueue_dec(__stl_queue_t *stack);
 
 #endif

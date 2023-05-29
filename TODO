@@ -5,3 +5,4 @@
 - Work on the idea of a general allocator for any structure type [ ]
 --- 2023-05-28 ---
 - Create a macro for initializing the container [ ]
+- Solve that bug that allocs less capacity that the required [ ]
