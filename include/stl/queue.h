@@ -31,7 +31,7 @@ typedef struct {
 		STL_CONTAINER(1, dtype, STL_DEFAULT_QUEUE_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_queue_t_ptr_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
-#define __stl_def_re_queue(dtype, ...)		\
+#define __stl_def_queue(dtype, ...)		\
 	typedef struct {				\
 		int rear, front;					\
 		size_t size;						\
@@ -39,9 +39,9 @@ typedef struct {
 	} __stl_queue_t_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
 #define def_queue(dtype, ...)						\
-	SLT_IF_ELSE_PTR_DTYPE(dtype)					\
+	STL_IF_ELSE_PTR_DTYPE(dtype)					\
 	     (__stl_def_ptr_queue(dtype __VA_OPT__(,) __VA_ARGS__))	\
-	     (__stl_def_re_queue(dtype __VA_OPT__(,) __VA_ARGS__))
+	     (__stl_def_queue(dtype __VA_OPT__(,) __VA_ARGS__))
 
 #define __stl_def_ptr_dqueue(one, dtype, ...)				\
 	typedef struct {						\
@@ -58,40 +58,40 @@ typedef struct {
 	} __stl_dqueue_t_ ## dtype
 
 #define def_dqueue(dtype)				\
-	SLT_IF_ELSE_PTR_DTYPE(dtype)			\
+	STL_IF_ELSE_PTR_DTYPE(dtype)			\
 	     (__stl_def_ptr_dqueue(dtype))		\
 	     (__stl_def_re_dqueue(dtype))
 
 #define __stl_queue_ptr(one, dtype, ...)				\
 	__stl_queue_t_ptr_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
-#define __stl_queue_re(dtype, ...)				\
+#define __stl_queue(dtype, ...)				\
 	__stl_queue_t_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
 #define queue(dtype, ...)						\
-	SLT_IF_ELSE_PTR_DTYPE(dtype)					\
+	STL_IF_ELSE_PTR_DTYPE(dtype)					\
 	     (__stl_queue_ptr(dtype __VA_OPT__(,) __VA_ARGS__))		\
-	     (__stl_queue_re(dtype __VA_OPT__(,) __VA_ARGS__))
-
+	     (__stl_queue(dtype __VA_OPT__(,) __VA_ARGS__))
 
 #define __stl_dqueue_ptr(one, dtype)				\
 	__stl_dqueue_t_ptr_ ## dtype 
-#define __stl_dqueue_re(dtype)				\
+#define __stl_dqueue(dtype)				\
 	__stl_dqueue_t_ ## dtype 
 
 #define dqueue(dtype)				\
-	SLT_IF_ELSE_PTR_DTYPE(dtype)			\
+	STL_IF_ELSE_PTR_DTYPE(dtype)			\
 	     (__stl_dqueue_ptr(dtype))			\
-	     (__stl_dqueue_re(dtype))
+	     (__stl_dqueue(dtype))
 
 #define new_dqueue(dtype, ...)						\
-	SLT_IF_ELSE_PTR_DTYPE(dtype)\
+	STL_IF_ELSE_PTR_DTYPE(dtype)\
 	     ((__stl_dqueue_ptr(dtype) *))	\
-	     ((__stl_dqueue_re(dtype) *))				\
-	     stl_alloc_struct(SLT_IF_ELSE_PTR_DTYPE(dtype)\
+	     ((__stl_dqueue(dtype) *))				\
+	     stl_alloc_struct(STL_IF_ELSE_PTR_DTYPE(dtype)\
 			      (sizeof(__stl_dqueue_ptr(dtype)))		\
-			      (sizeof(__stl_dqueue_re(dtype))),		\
-			 SLT_IF_ELSE_PTR_DTYPE(dtype)(sizeof(__STL_SECOND(dtype) *))(sizeof(dtype)) \
-			 * __STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) STL_DEFAULT_DQUEUE_CAPACITY))
+			      (sizeof(__stl_dqueue(dtype))),		\
+			      STL_IF_ELSE_PTR_DTYPE(dtype)(sizeof(__STL_SECOND(dtype) *))(sizeof(dtype)) \
+			      * __STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) \
+							    STL_DEFAULT_DQUEUE_CAPACITY))
 
 #define queue_init(queue, ...)						\
 	do {								\
@@ -107,19 +107,15 @@ typedef struct {
 #define queue_capacity(queue) STL_CONTAINER_CAPACITY((queue).con)
 #define queue_front(queue) (queue).con.container[stl_queue_front((__stl_queue_t *) &(queue))]
 #define queue_back(queue) (queue).con.container[stl_queue_back((__stl_queue_t *) &(queue))]
-#define queue_push(queue, item)						\
-	(queue).con.container[stl_queue_inc((__stl_queue_t *) &(queue))] = item
-#define queue_pop(queue)			\
-	(queue).con.container[stl_queue_dec((__stl_queue_t *) &(queue))]
-
+#define queue_push(queue, item) (queue).con.container[stl_queue_inc((__stl_queue_t *) &(queue))] = item
+#define queue_pop(queue) (queue).con.container[stl_queue_dec((__stl_queue_t *) &(queue))]
 #define dqueue_init(dqueue, ...) queue_init(*dqueue __VA_OPT__(,) __VA_ARGS__)
 #define dqueue_empty(queue) queue_size(*dqueue)
 #define dqueue_capacity(queue) queue_capacity(*dqueue)
 #define dqueue_size(dqueue) queue_size(*dqueue)
-#define dqueue_push(dqueue, item) \
+#define dqueue_push(dqueue, item)					\
 	*((typeof(dqueue->con.container[0]) *) stl_dqueue_inc((__stl_queue_t *) dqueue)) = item
-#define dqueue_pop(dqueue)						\
-	*((typeof(dqueue->con.container[0]) *) stl_dqueue_dec((__stl_queue_t *) dqueue))
+#define dqueue_pop(dqueue) *((typeof(dqueue->con.container[0]) *) stl_dqueue_dec((__stl_queue_t *) dqueue))
 #define dqueue_front(dqueue) queue_front(*dqueue)
 #define dqueue_back(dqueue) queue_back(*dqueue)
 

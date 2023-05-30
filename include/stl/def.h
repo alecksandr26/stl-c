@@ -37,7 +37,7 @@
 #define STL_DEF_ST_RE(dtype, typedef_st, ...)	\
 	typedef_st ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
-#define SLT_IF_ELSE_PTR_DTYPE(dtype_or_cond, ...)					\
+#define STL_IF_ELSE_PTR_DTYPE(dtype_or_cond, ...)					\
 	__STL_IF_ELSE(__STL_IS_PROBE(__STL_CAT(__STL_IS_PTR_, dtype_or_cond)))
 
 #define __STL_IS_PTR_1 __STL_PROBE()

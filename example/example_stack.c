@@ -20,7 +20,7 @@ void print_d_attributes(dstack(float) *dstack)
 	printf("Capacity: %zu\n", dstack_capacity(dstack));
 }
 
-int main()
+void example_float(void)
 {
 	puts("Static structrue");
 
@@ -64,6 +64,22 @@ int main()
 	printf("%f\n", dstack_top(dstack));
 
 	stl_free(dstack);
+}
+
+int main()
+{
+	def_stack(d_ptr(float));
+	stack(d_ptr(float)) stack;
+	stack_init(stack);
+	
+	float var1 = 2.0, var2 = 3.0;
+	
+	stack_push(stack, &var1);
+	stack_push(stack, &var2);
+
+	printf("%f\n", *stack_top(stack));
+	
+	
 	
 	return 0;
 }

@@ -2,6 +2,7 @@
 #include <except.h>
 
 #include "../include/stl/stack.h"
+#include "../include/stl/ex.h"
 
 TESTCASE(StackStaticAllocation) {
 	def_stack(float, 11);
@@ -181,7 +182,22 @@ TESTCASE(StackDynamicAdditionRemoving) {
 	stl_free(stack);
 } ENDTESTCASE
 
+
+TESTCASE(TestingStackPtr) {
+	def_stack(d_ptr(float));
+	stack(d_ptr(float)) stack;
+	stack_init(stack);
+	
+	TEST(TrivialAddition) {
+		float var = 2.0;
+		stack_push(stack, &var);
+		ASSERT(*stack_top(stack) == 2.0, "The Top Should be 2.0");
+	}
+		
+} ENDTESTCASE
+
 NEW_SUIT(SuitTestStack, StackStaticAllocation, StackAdd, StackPoping,
 	 StackDynamic,
-	 StackDynamicAdditionRemoving);
+	 StackDynamicAdditionRemoving,
+	 TestingStackPtr);
 
