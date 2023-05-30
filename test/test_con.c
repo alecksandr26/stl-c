@@ -14,7 +14,7 @@ TESTCASE(InitStaticContainer) {
 	} stack;
 	
 	TEST(InitStatic) {
-		STL_CONTAINER(float, 10) container; /* Create the container */
+		STL_CONTAINER(0, float, 10) container; /* Create the container */
 		STL_INIT_D_CONTAINER_DTYPE_SIZE(container, float);
 		STL_INIT_D_CONTAINER_CAPACITY(container);
 
@@ -23,7 +23,7 @@ TESTCASE(InitStaticContainer) {
 	}
 
 	TEST(InitStaticStruct) {
-		STL_CONTAINER(person, 10) container; /* Create the container */
+		STL_CONTAINER(0, person, 10) container; /* Create the container */
 		STL_INIT_D_CONTAINER_DTYPE_SIZE(container, float);
 		STL_INIT_D_CONTAINER_CAPACITY(container);
 		
@@ -32,12 +32,12 @@ TESTCASE(InitStaticContainer) {
 	}
 
 	TEST(IsStatic) {
-		STL_CONTAINER(float, 10) container; /* Create the container */
+		STL_CONTAINER(0, float, 10) container; /* Create the container */
 		ASSERT(__STL_IS_DYNAMIC_CONTAINER(container.container) == 0, "It should be false");
 	}
 
 	TEST(AssigningSTsize) {
-		STL_CONTAINER(float, 10) container; /* Create the container */
+		STL_CONTAINER(0, float, 10) container; /* Create the container */
 		STL_INIT_D_CONTAINER_ST_SIZE(container, stack);
 
 		ASSERT(container.st_size == sizeof(stack), "IT should have this structure size");
@@ -56,7 +56,7 @@ TESTCASE(InitDynamicContainer) {
 		size_t head;
 	} stack;
 
-	STL_DCONTAINER(float) dcontainer; /* Create the dynamic container */
+	STL_DCONTAINER(0, float) dcontainer; /* Create the dynamic container */
 
 	/* Alloc memory */
 	if ((dcontainer.container = malloc(sizeof(float) * 10)) == NULL) {
@@ -74,7 +74,7 @@ TESTCASE(InitDynamicContainer) {
 	}
 
 	TEST(InitDynamicStruct) {
-		STL_DCONTAINER(person) dcontainer2; /* Create the dynamic container */
+		STL_DCONTAINER(0, person) dcontainer2; /* Create the dynamic container */
 		
 		/* Alloc memory */
 		if ((dcontainer2.container = malloc(sizeof(person) * 10)) == NULL) {

@@ -13,7 +13,8 @@
 
 int main()
 {
-	INCLUDE_SUIT("test_stack.c", SuitTestStack);
+	INCLUDE_SUIT("test_queue.c", SuitTestQueue);
+	// INCLUDE_SUIT("test_stack.c", SuitTestStack);
 	INCLUDE_SUIT("test_con.c", SuitTestCon);
 
 	ATTACH_EXTRA_FLAGS("lib/libstl.a");
