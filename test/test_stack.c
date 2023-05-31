@@ -165,7 +165,7 @@ TESTCASE(StackDynamicAdditionRemoving) {
 			ASSERT(dstack_size(stack) == 0, "Shold be empty");
 		} endtry;
 	}
-
+	
 	TEST(IncreasingWithAddition) {
 		try {
 			for (int i = 1; i <= 100; i++)
@@ -187,13 +187,19 @@ TESTCASE(TestingStackPtr) {
 	def_stack(d_ptr(float));
 	stack(d_ptr(float)) stack;
 	stack_init(stack);
+	float var = 2.0;
 	
 	TEST(TrivialAddition) {
-		float var = 2.0;
 		stack_push(stack, &var);
 		ASSERT(*stack_top(stack) == 2.0, "The Top Should be 2.0");
 	}
-		
+
+	TEST(TrivialDeletion) {
+		stack_push(stack, &var);
+		ASSERT(*stack_pop(stack) == 2.0, "The Poped Should be 2.0");
+		ASSERT(stack_size(stack) == 0, "Should be empty");
+		ASSERT(stack_empty(stack) == 1, "Should be empty");
+	}
 } ENDTESTCASE
 
 NEW_SUIT(SuitTestStack, StackStaticAllocation, StackAdd, StackPoping,

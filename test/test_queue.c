@@ -227,5 +227,26 @@ TESTCASE(DynamicQueueDeleting) {
 } ENDTESTCASE
 
 
+TESTCASE(TestingQueuePointerSupport) {
+	def_queue(d_ptr(float));
+	queue(d_ptr(float)) queue;
+	queue_init(queue);
+	float var = 2.0;
+	
+	TEST(TrivialAddition) {
+		queue_push(queue, &var);
+		ASSERT(*queue_front(queue) == 2.0, "Should be 2.0");
+	}
+
+	TEST(TrivialDeletion) {
+		queue_push(queue, &var);
+		ASSERT(*queue_pop(queue) == 2.0, "Should be 2.0");
+		ASSERT(queue_size(queue) == 0, "Should be cero");
+		ASSERT(queue_empty(queue) == 1, "Should be empty");
+	}
+} ENDTESTCASE
+
+
 NEW_SUIT(SuitTestQueue, InitStaticQueue, QueueAddition, QueueDeleting,
-	 DynamicAllocationQueue, DynamicQueueAddition, DynamicQueueDeleting);
+	 DynamicAllocationQueue, DynamicQueueAddition, DynamicQueueDeleting,
+	 TestingQueuePointerSupport);
