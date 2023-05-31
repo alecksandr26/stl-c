@@ -1,5 +1,8 @@
 --- 2023-05-26 ---
 - Create a way to track each address from the memory allocation [ ]
-- Start creating the queue data structure [ ]
-- Create the tests for the stack structure [ ]
+- Start creating the queue data structure [X]
+- Create the tests for the stack structure [X]
 - Work on the idea of a general allocator for any structure type [ ]
+--- 2023-05-28 ---
+- Create a macro for initializing the container [ ]
+- Solve that bug that allocs less capacity that the required [ ]

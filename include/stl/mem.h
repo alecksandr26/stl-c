@@ -17,9 +17,8 @@
 #define stl_free(structure) stl_free_struct((void *) structure, \
 					    sizeof(*structure), \
 					    structure->con.capacity * sizeof(structure->con.container[0]))
-
 extern unsigned long stl_heapaddr;
-extern Except NotEnoughMemory, NotEnoughMemoryToRealloc;
+
 extern unsigned char *stl_alloc_struct(size_t struct_size, size_t container_size);
 extern void stl_realloc_container(unsigned char *struct_ptr, size_t struct_size, size_t new_container_size);
 extern void stl_free_struct(unsigned char *struct_ptr, size_t struct_size, size_t container_size);
