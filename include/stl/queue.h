@@ -50,7 +50,7 @@ typedef struct {
 		STL_DCONTAINER(1, dtype) con;				\
 	} __stl_dqueue_t_ptr_ ## dtype
 
-#define __stl_def_re_dqueue(dtype, ...)					\
+#define __stl_def_dqueue(dtype, ...)					\
 	typedef struct {						\
 		int rear, front;					\
 		size_t size;						\
@@ -60,7 +60,7 @@ typedef struct {
 #define def_dqueue(dtype)				\
 	STL_IF_ELSE_PTR_DTYPE(dtype)			\
 	     (__stl_def_ptr_dqueue(dtype))		\
-	     (__stl_def_re_dqueue(dtype))
+	     (__stl_def_dqueue(dtype))
 
 #define __stl_queue_ptr(one, dtype, ...)				\
 	__stl_queue_t_ptr_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
@@ -82,7 +82,7 @@ typedef struct {
 	     (__stl_dqueue_ptr(dtype))			\
 	     (__stl_dqueue(dtype))
 
-#define new_dqueue(dtype, ...)						\
+#define new_dqueue(dtype, ...)			\
 	STL_IF_ELSE_PTR_DTYPE(dtype)\
 	     ((__stl_dqueue_ptr(dtype) *))	\
 	     ((__stl_dqueue(dtype) *))				\

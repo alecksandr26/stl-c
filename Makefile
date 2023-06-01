@@ -44,9 +44,10 @@ OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				mem.o   \
 				con.o   \
 				stack.o \
-				queue.o)
+				queue.o\
+				list.o)
 
-EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, example_stack.out example_queue.out)
+EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, example_stack.out example_queue.out example_list.out)
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
 
 .PHONY: all clean format test

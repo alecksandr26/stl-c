@@ -5,3 +5,4 @@ Except EmptyStructure = {"EmptyStructure: The structure is empty, it doesn't hav
 Except NotEnoughMemory = {"NotEnoughMemory: Not enough memory for a new structure allocation"};
 Except NotEnoughMemoryToRealloc =					\
 	{"NotEnoughMemoryToRealloc: Not enough memory for a reallocation of the container"};
+Except InvalidIndex = {"InvalidIndex: Recived an invalid index"};
