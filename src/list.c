@@ -7,59 +7,34 @@
 #include "../include/stl/list.h"
 #include "../include/stl/ex.h"
 
-static int bs_array(unsigned char *arr, void *new_ele, size_t size, size_t isize,
-		       int (cmp)(void *i1, void *i2))
-{
-	assert(arr != NULL
-	       && cmp != NULL
-	       && new_ele != NULL
-	       && "None of them shuld be null");
-	assert(isize > 0 && "The size of one element can't be zero");
-
-	int l = 0, r = (int) size, m = 0, cmpr = 0;
-
-	while (r > l) {
-		m = (r - l) / 2 + l;
-		cmpr = cmp(&arr[m * isize], new_ele);
-		/* cmpr = -INT_MAX -> arr[m] > new_ele
-		   cmpr = 0 -> arr[m] = new_ele
-		   cmpr = INT_MAX -> arr[m] < new_ele
-		 */
-		if (cmpr == 0)
-			break;
-		else if (cmpr > 0)
-			l = ++m;
-		else
-			r = --m;
-	}
-
-	return m;
-}
-
-
 static size_t comp_pind(__stl_list_t *list, size_t lind)
 {
-	size_t j = 0;
+	int j = 0;
 
-	/* Try to swap elements from the container, uelems */
-
-	while (j < list->size_ul && lind + j >= list->uelems[j].pind) {
-		if (list->uelems[j].lind == (int) lind)
-			return list->uelems[j].pind;
-		j++;
+	/* made the logical decrementation */
+	for (size_t c = 0; c < list->size_ul; c++) {
+		if (list->uelems[c].lind == (int) lind)
+			return list->uelems[c].pind;
+		else if (list->uelems[c].lind < (int) lind && list->uelems[c].lind != -1)
+			if (lind <= list->uelems[c].pind)
+				lind--;
 	}
 
+	
+	for (size_t c = 0; c < list->size_ul; c++) {
+		if (list->uelems[c].lind > (int) lind || list->uelems[c].lind == -1) {
+			if (lind + j >= list->uelems[c].pind)
+				j++;
+		}
+	}
+	
 	return lind + j;
 }
 
-static size_t uelems_cmp(__stl_unorderedlist_t *uelem1, __stl_unorderedlist_t *uelem2)
-{
-	return (int) uelem2->pind - (int) uelem1->pind;
-}
-
-
 static __stl_linkedlist_t *comp_head(__stl_list_t *list)
 {
+	assert(list != NULL);
+	
 	if (list->size == 0)
 		return NULL;
 
@@ -71,8 +46,30 @@ static __stl_linkedlist_t *comp_head(__stl_list_t *list)
 	return head;
 }
 
+static void add_unorderd_elem(__stl_list_t *list, __stl_unorderedlist_t *uelem)
+{
+	assert(uelem != NULL && list != NULL);
+	size_t m = 0;
+	
+	/* TODO: Do a binary search here pls */
+	for (size_t i = 0; i < list->size_ul; i++) {
+		if (list->uelems[i].pind < uelem->pind)
+			m++;
+		if (uelem->lind != -1 && list->uelems[i].lind != -1) {
+			if (uelem->lind < list->uelems[i].lind)
+				list->uelems[i].lind++;
+		}
 
-size_t list_insert_byindex(__stl_list_t *list, size_t ind)
+	}
+	
+	if (m >= list->size_ul)
+		list->size_ul++;
+
+	memcpy(&list->uelems[m], uelem, sizeof(__stl_unorderedlist_t));
+}
+
+
+size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container)
 {
 	assert(list != NULL && "Can't be null");
 
@@ -84,19 +81,10 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind)
 
 	cindex_tins = comp_pind(list, ind);
 	if (stack_size(*list->st) > 0) {
+		/* TODO: Try to optimize this decision instead of an stack try to do a better selection
+		   Also think in the posibility that the logical index is the same as the physical
+		 */
 		cindex = stack_pop(*list->st);
-		
-		__stl_unorderedlist_t uelem = {
-			.lind = ind,
-			.pind = cindex,
-			.cpos = (ind > cindex) ? STL_LIST_RIGHT : STL_LIST_LEFT
-		};
-
-		int m = bs_array((unsigned char *) list->uelems, &uelem, list->size_ul,
-				 sizeof(__stl_unorderedlist_t),
-				 (int (*)(void *, void *)) uelems_cmp);
-
-		list->uelems[m].lind = ind;
 	} else
 		cindex = list->size_con;
 
@@ -104,13 +92,19 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind)
 		prev = comp_head(list);
 		next = NULL;
 	} else {
-		prev = &list->linked[cindex_tins];
-		next = list->linked[cindex_tins].next;
+		prev = list->linked[cindex_tins].prev;
+		next = &list->linked[cindex_tins];
+	}
 
+	if (cindex_tins != cindex) {
+		__stl_unorderedlist_t uelem = {
+			.lind = ind,
+			.pind = cindex
+		};
 		
+		add_unorderd_elem(list, &uelem);
 	}
 	
-	/* Link the elements */
 	if (prev != NULL) {
 		prev->next = &(list->linked[cindex]);
 		list->linked[cindex].prev = prev;
@@ -122,21 +116,13 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind)
 	} else
 		list->linked[cindex].next = NULL;
 
-	list->linked[cindex].pind = cindex;
 	list->size++;
 	if (list->size_con == cindex)
 		list->size_con++;
 	return cindex;
 }
 
-
-size_t list_inc(__stl_list_t *list)
-{
-	assert(list != NULL && "Can't be null");
-	return list_insert_byindex(list, list->size);
-}
-
-size_t list_fetch_byindex(__stl_list_t *list, size_t ind)
+size_t list_fetch_byindex(__stl_list_t *list, size_t ind, void *container)
 {
 	assert(list != NULL && "Can't be null");
 
@@ -146,7 +132,7 @@ size_t list_fetch_byindex(__stl_list_t *list, size_t ind)
 	return comp_pind(list, ind);
 }
 
-size_t list_remove_byindex(__stl_list_t *list, size_t ind)
+size_t list_remove_byindex(__stl_list_t *list, size_t ind, void *container)
 {
 	assert(list != NULL && "Can't be null");
 
@@ -166,39 +152,19 @@ size_t list_remove_byindex(__stl_list_t *list, size_t ind)
 	if (list->size_con - 1 == cindex) {
 		list->size_con--;
 	} else {
-		__stl_unorderedlist_t uelem = {
-			.pind = cindex,
-			.lind = - 1,
-			.cpos = STL_LIST_NONE
-		};
-
 		/* Solve the problem of the logical index afected by the erase of the other element
 		   ideas: Creating a linkedlist of unordered elements, iterate the whole list 
 		 */
-		
-		int m = bs_array((unsigned char *) list->uelems, &uelem, list->size_ul,
-				 sizeof(__stl_unorderedlist_t),
-				 (int (*)(void *, void *)) uelems_cmp);
-		if ((int) list->size_ul > m && list->uelems[m].pind == cindex) {
-			list->uelems[m].lind = -1;
-			list->uelems[m].cpos = STL_LIST_NONE;
-		} else {
-			for (int i = list->size_ul; i > m; i--)
-				memcpy(&list->uelems[i], &list->uelems[i - 1], sizeof(__stl_unorderedlist_t));
-			memcpy(&list->uelems[m], &uelem, sizeof(__stl_unorderedlist_t));
-			list->size_ul++;
-		}
+		__stl_unorderedlist_t uelem = {
+			.lind = -1,
+			.pind = cindex
+		};
+
+		add_unorderd_elem(list, &uelem);
 		
 		stack_push(*list->st, cindex);
 	}
 	
 	list->size--;
 	return cindex;
-}
-
-size_t list_dec(__stl_list_t *list)
-{
-	assert(list != NULL && "Can't be null");
-	
-	return list_remove_byindex(list, list->size_con - 1);
 }

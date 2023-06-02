@@ -21,21 +21,13 @@
 #define STL_DEFAULT_DLIST_CAPACITY STL_DEFAULT_DCONTAINER_CAPACITY
 #define STL_DEFAULT_DLIST_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
 
-enum STL_LIST_CPOS {
-	STL_LIST_NONE,
-	STL_LIST_LEFT,
-	STL_LIST_RIGHT
-};
-
-typedef struct {
+typedef struct __stl_unorderedlist_t {
 	int lind;
 	size_t pind;
-	enum STL_LIST_CPOS cpos;
 } __stl_unorderedlist_t;
 
 typedef struct __stl_linkedlist_t {
 	struct __stl_linkedlist_t *next, *prev;
-	size_t pind;
 } __stl_linkedlist_t;
 
 def_stack(size_t);
@@ -65,7 +57,7 @@ typedef struct {
 
 #define __stl_def_list(dtype, ...)					\
 	typedef struct {						\
-		size_t size, size_ul, size_con;			\
+		size_t size, size_ul, size_con;				\
 		stack(size_t) *st;					\
 		__stl_unorderedlist_t *uelems;				\
 		__stl_linkedlist_t *linked;				\
@@ -132,7 +124,7 @@ typedef struct {
 		STL_INIT_D_CONTAINER_DTYPE_SIZE((list).con, (list).con.container[0]); \
 		STL_INIT_D_CONTAINER_ST_SIZE((list).con, (list));	\
 		STL_INIT_D_CONTAINER_CAPACITY((list).con);		\
-		(list).uelems = (list).__ulist_alloc;				\
+		(list).uelems = (list).__ulist_alloc;			\
 		(list).linked = (list).__linked_alloc;			\
 		(list).st = &(list).__st_alloc;				\
 		stack_init(*(list).st);					\
@@ -142,20 +134,24 @@ typedef struct {
 #define list_empty(list) ((list).size == 0)
 #define list_capacity(list) (list).con.capacity
 #define list_append(list, item)						\
-	(list).con.container[list_inc((__stl_list_t *) &(list))] = item
+	(list).con.container[list_insert_byindex((__stl_list_t *) &(list), \
+						 (list).size, \
+						 (list).con.container)] = item
 #define list_insert(list, item, index)					\
-	(list).con.container[list_insert_byindex((__stl_list_t *) &(list), index)] = item
+	(list).con.container[list_insert_byindex((__stl_list_t *) &(list), \
+						 index,			\
+						 (list).con.container)] = item
 #define list_pop(list)							\
-	(list).con.container[list_dec((__stl_list_t *) &(list))]
+	(list).con.container[list_remove_byindex((__stl_list_t *) &(list), \
+						 (list).size - 1,	\
+						 (list).con.container)]
 #define list_index(list, index)						\
-	(list).con.container[list_fetch_byindex((__stl_list_t *) &(list), index)]
+	(list).con.container[list_fetch_byindex((__stl_list_t *) &(list), index, (list).con.container)]
 #define list_erase(list, index)						\
-	(list).con.container[list_remove_byindex((__stl_list_t *) &(list), index)]
+	(list).con.container[list_remove_byindex((__stl_list_t *) &(list), index, (list).con.container)]
 
-extern size_t list_inc(__stl_list_t *list);
-extern size_t list_dec(__stl_list_t *list);
-extern size_t list_fetch_byindex(__stl_list_t *list, size_t ind);
-extern size_t list_remove_byindex(__stl_list_t *list, size_t ind);
-extern size_t list_insert_byindex(__stl_list_t *list, size_t ind);
+extern size_t list_fetch_byindex(__stl_list_t *list, size_t ind, void *container);
+extern size_t list_remove_byindex(__stl_list_t *list, size_t ind, void *container);
+extern size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container);
 
 #endif
