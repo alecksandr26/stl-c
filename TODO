@@ -11,3 +11,5 @@
 - Update the logical indexes for the uelements in the list [ ]
 - Try to optimize the decisións of the phisically address selection in the list [ ]
   an idea could be find the shortest path to the destination
+--- 2023-06-05 ---
+- Start doing profiling [ ]

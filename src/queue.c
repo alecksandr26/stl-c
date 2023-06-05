@@ -16,7 +16,7 @@ size_t stl_queue_front(__stl_queue_t *queue)
 	assert(queue != NULL && "Can't be null");
 
 	if (queue_size(*queue) == 0)
-		throw_except(EmptyStructure);
+		throw(EmptyStructure);
 	
 	return (size_t) queue->front;
 }
@@ -26,7 +26,7 @@ size_t stl_queue_back(__stl_queue_t *queue)
 	assert(queue != NULL && "Can't be null");
 
 	if (queue_size(*queue) == 0)
-		throw_except(EmptyStructure);
+		throw(EmptyStructure);
 	
 	return (size_t) queue->rear;
 }
@@ -42,7 +42,7 @@ size_t stl_queue_inc(__stl_queue_t *queue)
 
 	if ((queue->front == 0 && queue->rear == (int) queue_capacity(*queue)) 
 	    || (queue->front != 0 && queue->rear == queue->front))
-		throw_except(NotEnoughCapacity);
+		throw(NotEnoughCapacity);
 	
 	queue->rear %= queue_capacity(*queue);
 	queue->size++;
@@ -54,7 +54,7 @@ size_t stl_queue_dec(__stl_queue_t *queue)
 	assert(queue != NULL && "Can't be null");
 	
 	if (queue_size(*queue) == 0)
-		throw_except(EmptyStructure);
+		throw(EmptyStructure);
 
 	const size_t front = (size_t) queue->front;
 
@@ -132,7 +132,7 @@ unsigned char *stl_dqueue_dec(__stl_queue_t *dqueue)
 	assert(dqueue != NULL && "Can't be null");
 	
 	if (queue_size(*dqueue) == 0)
-		throw_except(EmptyStructure);
+		throw(EmptyStructure);
 
 	if (dqueue->size <= dqueue->con.capacity / STL_DEFAULT_DQUEUE_INCREASE_RATE) {
 		if (dqueue->front <= dqueue->rear) {

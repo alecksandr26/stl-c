@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <assert.h>
-#include <except.h>
+#include <tc.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -74,7 +74,7 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container)
 	assert(list != NULL && "Can't be null");
 
 	if (list_size(*list) < ind && !list_empty(*list))
-		throw_except(InvalidIndex);
+		throw(InvalidIndex);
 
 	size_t cindex, cindex_tins;
 	__stl_linkedlist_t *next, *prev;
@@ -127,7 +127,7 @@ size_t list_fetch_byindex(__stl_list_t *list, size_t ind, void *container)
 	assert(list != NULL && "Can't be null");
 
 	if (list_size(*list) <= ind)
-		throw_except(InvalidIndex);
+		throw(InvalidIndex);
 
 	return comp_pind(list, ind);
 }
@@ -137,10 +137,10 @@ size_t list_remove_byindex(__stl_list_t *list, size_t ind, void *container)
 	assert(list != NULL && "Can't be null");
 
 	if (list_empty(*list))
-		throw_except(EmptyStructure);
+		throw(EmptyStructure);
 
 	if (list_size(*list) <= ind)
-		throw_except(InvalidIndex);
+		throw(InvalidIndex);
 	
 	const size_t cindex = comp_pind(list, ind);
 	

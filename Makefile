@@ -15,8 +15,8 @@ C = cc
 AR = ar cr
 
 C_FLAGS = -ggdb -pedantic -Wall 
-C_FLAGS_LIBS = -lexcept
-C_TEST_FLAGS = -lunittest -lexcept
+C_FLAGS_LIBS = -ltc
+C_TEST_FLAGS = -lunittest -ltc
 
 CF = clang-format -i
 

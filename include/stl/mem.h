@@ -12,7 +12,7 @@
 #define STL_MEM_INCLUDED
 
 #include <stddef.h>
-#include <except.h>
+#include <tc.h>
 
 #define stl_free(structure) stl_free_struct((void *) structure, \
 					    sizeof(*structure), \

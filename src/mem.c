@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <malloc.h>
 #include <string.h>
-#include <except.h>
+#include <tc.h>
 
 #include "../include/stl/ex.h"
 
@@ -12,10 +12,10 @@ unsigned char *stl_alloc_struct(size_t st_size, size_t container_size)
 	unsigned char *st_ptr, *container_ptr;
 	
 	if ((st_ptr = malloc(st_size)) == NULL)
-		throw_except(NotEnoughMemory);
+		throw(NotEnoughMemory);
 
 	if ((container_ptr = malloc(container_size)) == NULL)
-		throw_except(NotEnoughMemory);
+		throw(NotEnoughMemory);
 
 	if (stl_heapaddr < (unsigned long) container_ptr)
 		stl_heapaddr = ((unsigned long) container_ptr) + malloc_usable_size(container_ptr);
@@ -31,7 +31,7 @@ void stl_realloc_container(unsigned char *st_ptr, size_t st_size, size_t new_con
 	memcpy(&container_ptr, st_ptr + st_size - sizeof(void *), sizeof(void *));
 
 	if ((container_ptr = realloc(container_ptr, new_container_size)) == NULL)
-		throw_except(NotEnoughMemoryToRealloc);
+		throw(NotEnoughMemoryToRealloc);
 
 	if (stl_heapaddr < (unsigned long) container_ptr)
 		stl_heapaddr = ((unsigned long) container_ptr) + new_container_size;

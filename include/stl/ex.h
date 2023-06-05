@@ -11,7 +11,7 @@
 #ifndef EX_INCLUDED
 #define EX_INCLUDED
 
-#include <except.h>
+#include <tc.h>
 
 extern Except NotEnoughCapacity;
 extern Except EmptyStructure;
