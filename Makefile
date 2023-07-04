@@ -6,11 +6,6 @@
 %:: %,v
 %:: s.%
 
-define \n
-
-
-endef
-
 C = cc
 AR = ar cr
 

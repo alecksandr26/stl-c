@@ -61,7 +61,7 @@ TESTCASE(QueueAddition) {
 		try {
 			for (int i = 0; i < STL_DEFAULT_QUEUE_CAPACITY; i++)
 				queue_push(queue, i);
-		} except(NotEnoughCapacity) {
+		} catch (NotEnoughCapacity) {
 			ASSERT(0, "This assert should never be executed");
 		} endtry;
 
@@ -103,9 +103,9 @@ TESTCASE(QueueDeleting) {
 			ASSERT(queue_size(queue) == 0,
 			       "Now should be equal to zero");
 			
-		} except(NotEnoughCapacity) {
+		} catch (NotEnoughCapacity) {
 			ASSERT(0, "This assert should never be executed");
-		} except(EmptyStructure) {
+		} catch (EmptyStructure) {
 			ASSERT(0, "This assert should never be executed");
 		} endtry;
 	}
@@ -172,7 +172,7 @@ TESTCASE(DynamicQueueAddition) {
 		try {
 			for (int i = 0; i < STL_DEFAULT_QUEUE_CAPACITY; i++)
 				dqueue_push(dqueue, i);
-		} except(NotEnoughCapacity) {
+		} catch (NotEnoughCapacity) {
 			ASSERT(0, "This assert should never be executed");
 		} endtry;
 
@@ -216,9 +216,9 @@ TESTCASE(DynamicQueueDeleting) {
 			ASSERT(dqueue_size(dqueue) == 0,
 			       "Now should be equal to zero");
 			
-		} except(NotEnoughCapacity) {
+		} catch (NotEnoughCapacity) {
 			ASSERT(0, "This assert should never be executed");
-		} except(EmptyStructure) {
+		} catch (EmptyStructure) {
 			ASSERT(0, "This assert should never be executed");
 		} endtry;
 	}

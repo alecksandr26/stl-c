@@ -1,5 +1,5 @@
 #include <unittest.h>
-#include <except.h>
+#include <tc.h>
 
 #include "../include/stl/stack.h"
 #include "../include/stl/ex.h"
@@ -48,7 +48,7 @@ TESTCASE(StackAdd) {
 			
 			LOG("%zu", stack.head);
 			ASSERT(0, "This should never be executed");
-		} except(EmptyStructure) {
+		} catch(EmptyStructure) {
 			top = stack_size(stack);
 		} endtry;
 		
@@ -60,7 +60,7 @@ TESTCASE(StackAdd) {
 		try {
 			for (int i = 1; i <= STL_DEFAULT_STACK_CAPACITY; i++)
 				stack_push(stack, i);
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 	}
@@ -88,7 +88,7 @@ TESTCASE(StackPoping) {
 		try {
 			(void) stack_pop(stack); /* This should raise an exception */
 			ASSERT(0, "This exception should never be executed");
-		} except(EmptyStructure) {
+		} catch(EmptyStructure) {
 			ASSERT(stack_size(stack) == 0, "Should be zero");
 		} endtry;
 	}
@@ -101,9 +101,9 @@ TESTCASE(StackPoping) {
 				stack_push(stack, i);
 			for (int i = 1; i <= STL_DEFAULT_STACK_CAPACITY; i++)
 				(void) stack_pop(stack);
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
-		} except(EmptyStructure) {
+		} catch(EmptyStructure) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 
@@ -121,7 +121,7 @@ TESTCASE(StackDynamic) {
 			dstack(float) *stack2 = new_dstack(float, 10);
 			dstack_init(stack2);
 			stl_free(stack2);
-		} except(NotEnoughMemory) {
+		} catch(NotEnoughMemory) {
 			ASSERT(0, "This exception shoulnd't be happening");
 		} endtry;
 	}
@@ -161,7 +161,7 @@ TESTCASE(StackDynamicAdditionRemoving) {
 			(void) dstack_pop(stack);
 			
 			ASSERT(0, "This assertin should be never exectued");
-		} except(EmptyStructure) {
+		} catch(EmptyStructure) {
 			ASSERT(dstack_size(stack) == 0, "Shold be empty");
 		} endtry;
 	}
@@ -172,9 +172,9 @@ TESTCASE(StackDynamicAdditionRemoving) {
 				dstack_push(stack, i);
 			for (int i = 1; i <= 100; i++)
 				(void) dstack_pop(stack);
-		} except(NotEnoughMemory) {
+		} catch(NotEnoughMemory) {
 			ASSERT(0, "This exception should never be executed");
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 	}

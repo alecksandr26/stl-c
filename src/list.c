@@ -19,7 +19,6 @@ static size_t comp_pind(__stl_list_t *list, size_t lind)
 			if (lind <= list->uelems[c].pind)
 				lind--;
 	}
-
 	
 	for (size_t c = 0; c < list->size_ul; c++) {
 		if (list->uelems[c].lind > (int) lind || list->uelems[c].lind == -1) {
@@ -31,7 +30,7 @@ static size_t comp_pind(__stl_list_t *list, size_t lind)
 	return lind + j;
 }
 
-static __stl_linkedlist_t *comp_head(__stl_list_t *list)
+static __stl_linkedlist_t *comp_head(__stl_list_t *list, size_t n)
 {
 	assert(list != NULL);
 	
@@ -40,7 +39,7 @@ static __stl_linkedlist_t *comp_head(__stl_list_t *list)
 
 	__stl_linkedlist_t *head;
 
-	for (head = &list->linked[list->size_con - 1];
+	for (head = &list->linked[n - 1];
 	     head->next != NULL;
 	     head = head->next);
 	return head;
@@ -51,15 +50,13 @@ static void add_unorderd_elem(__stl_list_t *list, __stl_unorderedlist_t *uelem)
 	assert(uelem != NULL && list != NULL);
 	size_t m = 0;
 	
-	/* TODO: Do a binary search here pls */
 	for (size_t i = 0; i < list->size_ul; i++) {
 		if (list->uelems[i].pind < uelem->pind)
 			m++;
 		if (uelem->lind != -1 && list->uelems[i].lind != -1) {
-			if (uelem->lind < list->uelems[i].lind)
+			if (uelem->lind <= list->uelems[i].lind)
 				list->uelems[i].lind++;
 		}
-
 	}
 	
 	if (m >= list->size_ul)
@@ -68,8 +65,32 @@ static void add_unorderd_elem(__stl_list_t *list, __stl_unorderedlist_t *uelem)
 	memcpy(&list->uelems[m], uelem, sizeof(__stl_unorderedlist_t));
 }
 
+static void move_cell(__stl_list_t *list, size_t pind, size_t new_pind)
+{
+	assert(list != NULL && "Can't be null");
 
-size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container)
+	/* First update the linked array */
+	__stl_linkedlist_t *next = list->linked[pind].next, *prev = list->linked[pind].prev;
+
+	if (prev) {
+		prev->next = &(list->linked[new_pind]);
+		list->linked[new_pind].prev = prev;
+	} else
+		list->linked[new_pind].prev = NULL;
+	
+	if (next) {
+		next->prev = &(list->linked[new_pind]);
+		list->linked[new_pind].next = next;
+	} else
+		list->linked[new_pind].next = NULL;
+
+	memcpy((unsigned char *) list->container + (new_pind * list->con.dtype_size),
+	       (unsigned char *) list->container + (pind * list->con.dtype_size),
+	       list->con.dtype_size);
+}
+
+
+size_t list_insert_byindex(__stl_list_t *list, size_t ind)
 {
 	assert(list != NULL && "Can't be null");
 
@@ -81,35 +102,42 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container)
 
 	cindex_tins = comp_pind(list, ind);
 	if (stack_size(*list->st) > 0) {
-		/* TODO: Try to optimize this decision instead of an stack try to do a better selection
+		/* TODO: Try to optimize this decision, instead of an stack try to do a better selection
 		   Also think in the posibility that the logical index is the same as the physical
-		 */
+		*/
 		cindex = stack_pop(*list->st);
 	} else
-		cindex = list->size_con;
-
-	if (cindex_tins >= list->size_con) {
-		prev = comp_head(list);
-		next = NULL;
-	} else {
-		prev = list->linked[cindex_tins].prev;
-		next = &list->linked[cindex_tins];
-	}
+		cindex = list->size_con++;
 
 	if (cindex_tins != cindex) {
+		prev = list->linked[cindex_tins].prev;
+		next = &list->linked[cindex_tins];
+
 		__stl_unorderedlist_t uelem = {
 			.lind = ind,
 			.pind = cindex
 		};
 		
+		if (ind < list->size) {
+			/* Move the cell */
+			move_cell(list, cindex_tins, cindex);
+			cindex = cindex_tins;
+			uelem.lind = ind + 1;
+		}
+		
 		add_unorderd_elem(list, &uelem);
+	} else {
+		prev = comp_head(list, list->size_con - 1);
+		next = NULL;
 	}
-	
+
+	/* Link the elements */
 	if (prev != NULL) {
 		prev->next = &(list->linked[cindex]);
 		list->linked[cindex].prev = prev;
 	} else
 		list->linked[cindex].prev = NULL;
+	
 	if (next != NULL) {
 		next->prev = &(list->linked[cindex]);
 		list->linked[cindex].next = next;
@@ -117,12 +145,10 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind, void *container)
 		list->linked[cindex].next = NULL;
 
 	list->size++;
-	if (list->size_con == cindex)
-		list->size_con++;
 	return cindex;
 }
 
-size_t list_fetch_byindex(__stl_list_t *list, size_t ind, void *container)
+size_t list_fetch_byindex(__stl_list_t *list, size_t ind)
 {
 	assert(list != NULL && "Can't be null");
 
@@ -132,7 +158,7 @@ size_t list_fetch_byindex(__stl_list_t *list, size_t ind, void *container)
 	return comp_pind(list, ind);
 }
 
-size_t list_remove_byindex(__stl_list_t *list, size_t ind, void *container)
+size_t list_remove_byindex(__stl_list_t *list, size_t ind)
 {
 	assert(list != NULL && "Can't be null");
 

@@ -16,7 +16,6 @@ void print_list_attributes(list(float) *list)
 	
 }
 
-
 void print_float_list(list(float) *list)
 {
 	for (size_t i = 0; i < list_size(*list); i++) {
@@ -63,17 +62,19 @@ int main(void)
 	list_append(list, 9.0);
 	puts("Pushing the 10.0");
 	list_append(list, 10.0);
-	print_float_list(&list); /* list: 1, 3,  5, 6, 7, 9, 10 */
+	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10 */
 	
 	print_list_attributes(&list);
-
+	
 	puts("\nAftert inserting elements");
+	puts("Inserting the 11.0 at 0");
 	list_insert(list, 11.0, 0);
 	
 	print_float_list(&list); /* list: 11, 1, 3,  5, 6, 7, 9, 10 */
+	
+	puts("Inserting the 12.0 at 0");
 	list_insert(list, 12.0, 0);
 	print_float_list(&list); /* list: 12, 11, 1, 3, 5, 6, 7, 9, 10 */
-
 	
 	print_list_attributes(&list);
 		
