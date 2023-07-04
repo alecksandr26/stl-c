@@ -77,6 +77,27 @@ int main(void)
 	print_float_list(&list); /* list: 12, 11, 1, 3, 5, 6, 7, 9, 10 */
 	
 	print_list_attributes(&list);
+
+	puts("\nAfter pushing");
+	puts("Pushing the 13.0");
+	list_append(list, 13.0);
+	puts("Pushing the 14.0");
+	list_append(list, 14.0);
+	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10, 13, 14 */
+	
+	print_list_attributes(&list);
+
+
+	puts("\nAftert inserting elements");
+	printf("Inserting the 20.0 at %zu\n", list_size(list) - 2);
+	list_insert(list, 20.0, list_size(list) - 2);
+	
+	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10, 20, 13, 14 */
+	
+	printf("Inserting the 21.0 at %zu\n", list_size(list) - 1);
+	list_insert(list, 21.0, list_size(list) - 1);
+	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10, 20, 13, 21, 14 */
+
 		
 	return 0;
 }

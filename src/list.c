@@ -70,7 +70,8 @@ static void move_cell(__stl_list_t *list, size_t pind, size_t new_pind)
 	assert(list != NULL && "Can't be null");
 
 	/* First update the linked array */
-	__stl_linkedlist_t *next = list->linked[pind].next, *prev = list->linked[pind].prev;
+	__stl_linkedlist_t *next = list->linked[pind].next,
+		*prev = list->linked[pind].prev;
 
 	if (prev) {
 		prev->next = &(list->linked[new_pind]);
@@ -110,20 +111,24 @@ size_t list_insert_byindex(__stl_list_t *list, size_t ind)
 		cindex = list->size_con++;
 
 	if (cindex_tins != cindex) {
-		prev = list->linked[cindex_tins].prev;
-		next = &list->linked[cindex_tins];
+		/* Bug here at the linked list */
 
 		__stl_unorderedlist_t uelem = {
 			.lind = ind,
 			.pind = cindex
 		};
 		
+		prev = list->linked[cindex_tins].prev;
+		next = &list->linked[cindex];   /* Here is the bug */
+		
 		if (ind < list->size) {
 			/* Move the cell */
 			move_cell(list, cindex_tins, cindex);
+			list->linked[cindex].prev = &list->linked[cindex_tins];
 			cindex = cindex_tins;
 			uelem.lind = ind + 1;
-		}
+		} else
+			next = NULL;	     /* Inserting to the end */
 		
 		add_unorderd_elem(list, &uelem);
 	} else {
