@@ -18,5 +18,7 @@ extern Except EmptyStructure;
 extern Except NotEnoughMemory;
 extern Except NotEnoughMemoryToRealloc;
 extern Except InvalidIndex;
+extern Except NotEnoughCapacityAtStructure;
+extern Except CapacityAlreadyInitialized;
 
 #endif

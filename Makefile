@@ -37,12 +37,19 @@ PROFILES = $(addprefix $(TEST_PROFILE_DIR)/, profile_stack.out)
 OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stl.o   \
 				mem.o   \
-				con.o   \
-				stack.o \
-				queue.o\
-				list.o)
+				queue.o \
+				stack.o)
 
-EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, example_stack.out example_queue.out example_list.out)
+#				array.o)
+#				list.o\
+
+
+EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\
+						example_stack.out\
+						example_queue.out)
+#						example_list.out\
+#						example_array.out\
+
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
 
 .PHONY: all clean format test

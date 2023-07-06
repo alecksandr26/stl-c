@@ -17,6 +17,7 @@
 #include "stl/ex.h"
 #include "stl/stack.h"
 #include "stl/queue.h"
+#include "stl/gen.h"
 
 #endif
 

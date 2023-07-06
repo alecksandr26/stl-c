@@ -6,3 +6,4 @@ Except NotEnoughMemory = {"NotEnoughMemory: Not enough memory for a new structur
 Except NotEnoughMemoryToRealloc =					\
 	{"NotEnoughMemoryToRealloc: Not enough memory for a reallocation of the container"};
 Except InvalidIndex = {"InvalidIndex: Recived an invalid index"};
+Except CapacityAlreadyInitialized = {"CapacityAlreadyInitialized: Capacity already initialized"};

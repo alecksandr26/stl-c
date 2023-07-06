@@ -20,21 +20,18 @@
 
 typedef struct {
 	int rear, front;
-	size_t size;
 	__stl_con_t con;
 } __stl_queue_t;
 
 #define __stl_def_ptr_queue(one, dtype, ...)		\
 	typedef struct {						\
 		int rear, front;					\
-		size_t size;						\
 		STL_CONTAINER(1, dtype, STL_DEFAULT_QUEUE_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_queue_t_ptr_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
 #define __stl_def_queue(dtype, ...)		\
 	typedef struct {				\
 		int rear, front;					\
-		size_t size;						\
 		STL_CONTAINER(0, dtype, STL_DEFAULT_QUEUE_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_queue_t_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
@@ -46,14 +43,12 @@ typedef struct {
 #define __stl_def_ptr_dqueue(one, dtype, ...)				\
 	typedef struct {						\
 		int rear, front;					\
-		size_t size;						\
 		STL_DCONTAINER(1, dtype) con;				\
 	} __stl_dqueue_t_ptr_ ## dtype
 
 #define __stl_def_dqueue(dtype, ...)					\
 	typedef struct {						\
 		int rear, front;					\
-		size_t size;						\
 		STL_DCONTAINER(0, dtype) con;				\
 	} __stl_dqueue_t_ ## dtype
 
@@ -72,9 +67,9 @@ typedef struct {
 	     (__stl_queue_ptr(dtype __VA_OPT__(,) __VA_ARGS__))		\
 	     (__stl_queue(dtype __VA_OPT__(,) __VA_ARGS__))
 
-#define __stl_dqueue_ptr(one, dtype)				\
+#define __stl_dqueue_ptr(one, dtype)		\
 	__stl_dqueue_t_ptr_ ## dtype 
-#define __stl_dqueue(dtype)				\
+#define __stl_dqueue(dtype)			\
 	__stl_dqueue_t_ ## dtype 
 
 #define dqueue(dtype)				\
@@ -82,49 +77,17 @@ typedef struct {
 	     (__stl_dqueue_ptr(dtype))			\
 	     (__stl_dqueue(dtype))
 
-#define new_dqueue(dtype, ...)			\
-	STL_IF_ELSE_PTR_DTYPE(dtype)\
-	     ((__stl_dqueue_ptr(dtype) *))	\
-	     ((__stl_dqueue(dtype) *))				\
-	     stl_alloc_struct(STL_IF_ELSE_PTR_DTYPE(dtype)\
-			      (sizeof(__stl_dqueue_ptr(dtype)))		\
-			      (sizeof(__stl_dqueue(dtype))),		\
-			      STL_IF_ELSE_PTR_DTYPE(dtype)(sizeof(__STL_SECOND(dtype) *))(sizeof(dtype)) \
-			      * __STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) \
-							    STL_DEFAULT_DQUEUE_CAPACITY))
+#define queue_front(queue) (queue).con.container[__stl_queue_front((__stl_queue_t *) &(queue))]
+#define queue_back(queue) (queue).con.container[__stl_queue_back((__stl_queue_t *) &(queue))]
+#define queue_push(queue, item)						\
+	*((typeof((queue).con.container[0]) *) __stl_queue_inc((__stl_queue_t *) &(queue))) = item
+#define queue_pop(queue)						\
+	*((typeof((queue).con.container[0]) *) __stl_queue_dec((__stl_queue_t *) &(queue)))
 
-#define queue_init(queue, ...)						\
-	do {								\
-		(queue).size = 0;					\
-		(queue).rear = (queue).front = -1;			\
-		STL_INIT_D_CONTAINER_DTYPE_SIZE((queue).con, (queue).con.container[0]); \
-		STL_INIT_D_CONTAINER_ST_SIZE((queue).con, (queue));	\
-		STL_INIT_D_CONTAINER_CAPACITY((queue).con);		\
-	} while (0)
-
-#define queue_empty(queue) ((queue).size == 0)
-#define queue_size(queue) (queue).size
-#define queue_capacity(queue) STL_CONTAINER_CAPACITY((queue).con)
-#define queue_front(queue) (queue).con.container[stl_queue_front((__stl_queue_t *) &(queue))]
-#define queue_back(queue) (queue).con.container[stl_queue_back((__stl_queue_t *) &(queue))]
-#define queue_push(queue, item) (queue).con.container[stl_queue_inc((__stl_queue_t *) &(queue))] = item
-#define queue_pop(queue) (queue).con.container[stl_queue_dec((__stl_queue_t *) &(queue))]
-#define dqueue_init(dqueue, ...) queue_init(*dqueue __VA_OPT__(,) __VA_ARGS__)
-#define dqueue_empty(queue) queue_size(*dqueue)
-#define dqueue_capacity(queue) queue_capacity(*dqueue)
-#define dqueue_size(dqueue) queue_size(*dqueue)
-#define dqueue_push(dqueue, item)					\
-	*((typeof(dqueue->con.container[0]) *) stl_dqueue_inc((__stl_queue_t *) dqueue)) = item
-#define dqueue_pop(dqueue) *((typeof(dqueue->con.container[0]) *) stl_dqueue_dec((__stl_queue_t *) dqueue))
-#define dqueue_front(dqueue) queue_front(*dqueue)
-#define dqueue_back(dqueue) queue_back(*dqueue)
-
-extern size_t stl_queue_inc(__stl_queue_t *queue);
-extern size_t stl_queue_dec(__stl_queue_t *queue);
-extern size_t stl_queue_front(__stl_queue_t *queue);
-extern size_t stl_queue_back(__stl_queue_t *queue);
-extern unsigned char *stl_dqueue_inc(__stl_queue_t *stack);
-extern unsigned char *stl_dqueue_dec(__stl_queue_t *stack);
+extern unsigned char *__stl_queue_inc(__stl_queue_t *queue);
+extern unsigned char *__stl_queue_dec(__stl_queue_t *queue);
+extern size_t __stl_queue_front(__stl_queue_t *queue);
+extern size_t __stl_queue_back(__stl_queue_t *queue);
 
 #define mul_def_queue(dtype, X, ...) def_queue(dtype, X) __VA_OPT__(; mul_def_queue1(dtype, __VA_ARGS__))
 #define mul_def_queue1(dtype, X, ...) def_queue(dtype, X) __VA_OPT__(; mul_def_queue2(dtype, __VA_ARGS__))

@@ -6,61 +6,49 @@
 #include "../include/stl/stack.h"
 #include "../include/stl/ex.h"
 
-size_t stl_stack_inc(__stl_stack_t *stack)
+unsigned char *__stl_stack_inc(__stl_stack_t *stack)
 {
 	assert(stack != NULL && "Can't be null");
-
-	if (stack->head + 1 > stack->con.capacity)
-		throw(NotEnoughCapacity);
 	
-	return stack->head++;
+	if (stack->con.size + 1 > stack->con.capacity) {
+		if (stack->con.type == STL_STATIC)
+			throw(NotEnoughCapacity);
+		stack->con.addr = stack->con.container =
+			stl_realloc_container(stack->con.addr, stack->con.capacity
+					      * STL_DEFAULT_DSTACK_INCREASE_RATE
+					      * stack->con.dtype_size);
+		stack->con.capacity *= STL_DEFAULT_DSTACK_INCREASE_RATE;
+	}
+	
+	return stack->con.addr + stack->con.size++ * stack->con.dtype_size;
 }
 
-size_t stl_stack_dec(__stl_stack_t *stack)
+
+
+unsigned char *__stl_stack_dec(__stl_stack_t *stack)
 {
 	assert(stack != NULL && "Can't be null");
 	
-	if (stack->head == 0)
+	if (stack->con.size == 0)
 		throw(EmptyStructure);
 
-	return --stack->head;
-}
-
-size_t stl_stack_top(__stl_stack_t *stack)
-{
-	assert(stack != NULL && "Can't be null");
-	
-	if (stack->head == 0)
-		throw(EmptyStructure);
-
-	return stack->head - 1;
-}
-
-
-unsigned char *stl_dstack_inc(__stl_stack_t *stack)
-{
-	if (stack->head + 1 > stack->con.capacity) {
-		stl_realloc_container((unsigned char *) stack, sizeof(*stack), stack->con.capacity \
-				      * STL_DEFAULT_DSTACK_INCREASE_RATE * stack->con.dtype_size);
-		STL_INIT_D_CONTAINER_CAPACITY(stack->con);
+	if (stack->con.type == STL_DYNAMIC
+	    && stack->con.size <= stack->con.capacity / STL_DEFAULT_DSTACK_INCREASE_RATE) {
+		stack->con.addr = stack->con.container =
+			stl_realloc_container((unsigned char *) stack->con.container,
+					      (stack->con.size + 1) * stack->con.dtype_size);
+		stack->con.capacity = stack->con.size + 1;
 	}
 
-	return stack->con.container + (stack->head++ * stack->con.dtype_size);
+	return stack->con.addr + --stack->con.size * stack->con.dtype_size;
 }
 
-
-unsigned char *stl_dstack_dec(__stl_stack_t *stack)
+size_t __stl_stack_top(__stl_stack_t *stack)
 {
-
-	if (stack->head == 0)
-		throw(EmptyStructure);
+	assert(stack != NULL && "Can't be null");
 	
-	if (stack->head <= stack->con.capacity / STL_DEFAULT_DSTACK_INCREASE_RATE) {
-		stl_realloc_container((unsigned char *) stack,
-				      sizeof(*stack),
-				      (stack->head + 1) * stack->con.dtype_size);
-		STL_INIT_D_CONTAINER_CAPACITY(stack->con);
-	}
-	return stack->con.container + (--stack->head * stack->con.dtype_size);
-}
+	if (stack->con.size == 0)
+		throw(EmptyStructure);
 
+	return stack->con.size - 1;
+}
