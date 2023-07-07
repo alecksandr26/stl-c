@@ -37,18 +37,16 @@ PROFILES = $(addprefix $(TEST_PROFILE_DIR)/, profile_stack.out)
 OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stl.o   \
 				mem.o   \
+				stack.o\
 				queue.o \
-				stack.o)
-
-#				array.o)
-#				list.o\
-
+				array.o\
+				list.o)
 
 EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\
 						example_stack.out\
-						example_queue.out)
-#						example_list.out\
-#						example_array.out\
+						example_queue.out\
+						example_array.out\
+						example_list.out)
 
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
 

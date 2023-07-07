@@ -15,32 +15,32 @@ void print_attributes_queue_100(queue(d_ptr(float), 100) *queue)
 { 
  	printf("size: %zu\n", st_size(*queue));
  	printf("capacity: %zu\n", st_capacity(*queue)); 
- 	printf("rear: %i\n", queue->rear); 
- 	printf("front: %i\n", queue->front); 
+ 	printf("rear: %zu\n", queue->rear); 
+ 	printf("front: %zu\n", queue->front); 
 }
 
 void print_attributes_queue_10(queue(float, 10) *queue)
 {
 	printf("size: %zu\n", st_size(*queue)); 
  	printf("capacity: %zu\n", st_capacity(*queue)); 
- 	printf("rear: %i\n", queue->rear); 
- 	printf("front: %i\n", queue->front);
+ 	printf("rear: %zu\n", queue->rear); 
+ 	printf("front: %zu\n", queue->front);
 }
 
 void print_attributes_dqueue(dqueue(d_ptr(float)) *dqueue)
 {
 	printf("size: %zu\n", st_size(*dqueue)); 
  	printf("capacity: %zu\n", st_capacity(*dqueue));
- 	printf("rear: %i\n", dqueue->rear); 
- 	printf("front: %i\n", dqueue->front);
+ 	printf("rear: %zu\n", dqueue->rear); 
+ 	printf("front: %zu\n", dqueue->front);
 }
 
 void print_attributes_queue(dqueue(int) *queue)
 {
 	printf("size: %zu\n", st_size(*queue)); 
  	printf("capacity: %zu\n", st_capacity(*queue)); 
- 	printf("rear: %i\n", queue->rear); 
- 	printf("front: %i\n", queue->front);
+ 	printf("rear: %zu\n", queue->rear); 
+ 	printf("front: %zu\n", queue->front);
 }
 
 void example_static_queue_float(void)
@@ -183,8 +183,8 @@ void example_dqueue_ptr_float(void)
 
 	(void) queue_pop(*dqueue);
 	
-	printf("%f | %i\n", *queue_front(*dqueue), dqueue->front);
-	printf("%f | %i\n", *queue_back(*dqueue), dqueue->rear);
+	printf("%f | %zu\n", *queue_front(*dqueue), dqueue->front);
+	printf("%f | %zu\n", *queue_back(*dqueue), dqueue->rear);
 	
 	queue_push(*dqueue, &var);
 	queue_push(*dqueue, &var2);
@@ -211,10 +211,12 @@ int main()
 	queue_push(dq, 30);
 	queue_push(dq, 40);
 	queue_push(dq, 50);
+	print_attributes_queue(&dq);
 	
 	(void) queue_pop(dq);
 	(void) queue_pop(dq);
 	(void) queue_pop(dq);
+	
 
 	printf("%i\n", queue_front(dq));
 	printf("%i\n", queue_back(dq));
@@ -222,13 +224,15 @@ int main()
 	print_attributes_queue(&dq);
 
 	queue_push(dq, 10);
+	queue_push(dq, 20);
 
 	printf("%i\n", queue_front(dq));
 	printf("%i\n", queue_back(dq));
 
 	print_attributes_queue(&dq);
+	puts("\n");
 	
-	// example_dqueue_ptr_float();
+	example_dqueue_ptr_float();
 
 	st_free(dq);
 	

@@ -19,19 +19,19 @@
 #define STL_DEFAULT_DQUEUE_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
 
 typedef struct {
-	int rear, front;
+	size_t rear, front;
 	__stl_con_t con;
 } __stl_queue_t;
 
 #define __stl_def_ptr_queue(one, dtype, ...)		\
 	typedef struct {						\
-		int rear, front;					\
+		size_t rear, front;					\
 		STL_CONTAINER(1, dtype, STL_DEFAULT_QUEUE_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_queue_t_ptr_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
 #define __stl_def_queue(dtype, ...)		\
 	typedef struct {				\
-		int rear, front;					\
+		size_t rear, front;					\
 		STL_CONTAINER(0, dtype, STL_DEFAULT_QUEUE_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_queue_t_ ## dtype ## __VA_OPT__(_) ##  __VA_ARGS__
 
@@ -42,13 +42,13 @@ typedef struct {
 
 #define __stl_def_ptr_dqueue(one, dtype, ...)				\
 	typedef struct {						\
-		int rear, front;					\
+		size_t rear, front;					\
 		STL_DCONTAINER(1, dtype) con;				\
 	} __stl_dqueue_t_ptr_ ## dtype
 
 #define __stl_def_dqueue(dtype, ...)					\
 	typedef struct {						\
-		int rear, front;					\
+		size_t rear, front;					\
 		STL_DCONTAINER(0, dtype) con;				\
 	} __stl_dqueue_t_ ## dtype
 

@@ -56,21 +56,30 @@ void example_float(void)
 	
 	dst_init(*dstack);
 	print_d_attributes_float(dstack);
-
+	
 	puts("Pushing...");
 
 	for (int i = 0; i <= 10; i++)
 		stack_push(*dstack, (float) i);
 	
 	print_d_attributes_float(dstack);
-
+	puts("Poping...");
+	
 	for (int i = 0; i < 5; i++)
 		(void) stack_pop(*dstack);
 
-	puts("Poping...");
+	print_d_attributes_float(dstack);
+	printf("%f\n", stack_top(*dstack));
+
+	puts("Pushing...");
+
+	for (int i = 0; i < 5; i++)
+		stack_push(*dstack, (float) i);
 
 	print_d_attributes_float(dstack);
 	printf("%f\n", stack_top(*dstack));
+
+	puts("\n");
 	
 	st_free(*dstack);
 }

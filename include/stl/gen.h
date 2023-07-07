@@ -26,21 +26,16 @@
 
 #define dst_init(st, ...)						\
 	do {								\
-		(st).con.container =					\
-			(typeof((st).con.container[0]) *)		\
-			stl_alloc_container(__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ \
+		STL_INIT_DCONTAINER((st).con, typeof((st).con.container[0]), \
+				    st, __STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
 									__VA_OPT__(,) \
 									STL_DEFAULT_CONTAINER_CAPACITY)); \
-		STL_INIT_CONTAINER((st).con, (st).con.container[0],	\
-				   st, __STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ \
-								   __VA_OPT__(,) \
-								   STL_DEFAULT_CONTAINER_CAPACITY)); \
 		memset(&(st), 0, sizeof(st) - sizeof((st).con));	\
 	} while (0)
 
 #define st_init(st)							\
 	do {								\
-		STL_INIT_CONTAINER((st).con, (st).con.container[0], st, \
+		STL_INIT_CONTAINER((st).con, typeof((st).con.container[0]), st, \
 				   sizeof((st).con.container) / sizeof((st).con.container[0]));	\
 		memset(&(st), 0, sizeof(st) - sizeof((st).con));	\
 	} while (0)
@@ -48,12 +43,8 @@
 
 #define st_free(st)							\
 	do {								\
-		size_t size;						\
-		unsigned char *container;				\
-		size = (st).con.size;					\
-		container = (st).con.addr;				\
-		if (__STL_IS_DYNAMIC_CONTAINER((st).con))		\
-			stl_free_container(container, size);		\
+		if (STL_IS_DYNAMIC_CONTAINER((st).con))			\
+			stl_free_container((st).con.addr, (st).con.capacity); \
 		if (((unsigned long) &(st)) < stl_heapaddr)		\
 			stl_free_struct((unsigned char *) &(st));	\
 	} while (0)

@@ -14,6 +14,7 @@
 
 #include <stddef.h>
 #include "def.h"
+#include "mem.h"
 
 #define STL_DEFAULT_CONTAINER_CAPACITY 1024
 #define STL_DEFAULT_DCONTAINER_CAPACITY 1024
@@ -35,9 +36,9 @@ typedef struct {
 
 #define STL_CONTAINER_SIZE sizeof(__stl_con_t)
 
-#define __STL_CONTAINER_SELECT_SIZE(X, ...) (X)
+#define __STL_CONTAINER_SELECT_CAPACITY(X, ...) (X)
 
-#define __STL_IS_DYNAMIC_CONTAINER(con) (STL_CONTAINER_SIZE == sizeof(con))
+#define STL_IS_DYNAMIC_CONTAINER(con) (STL_CONTAINER_SIZE == sizeof(con))
 
 #define STL_CONTAINER(cond, dtype, def_capacity, ...)			\
 	struct  {							\
@@ -45,8 +46,10 @@ typedef struct {
 		CONTAINER_TYPE type;					\
 		unsigned char *addr;					\
 		__STL_IF_ELSE(cond)					\
-		     (dtype *container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) def_capacity)]) \
-		     (dtype container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) def_capacity)]); \
+		     (dtype *container[__STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
+								       __VA_OPT__(,) def_capacity)]) \
+		     (dtype container[__STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
+								      __VA_OPT__(,) def_capacity)]); \
 	}
 
 #define STL_DCONTAINER(cond, dtype)					\
@@ -66,6 +69,20 @@ typedef struct {
 		(con).st_size = sizeof(st);				\
 		(con).addr = (unsigned char *) (con).container;		\
 		(con).type = (sizeof(con) > STL_CONTAINER_SIZE) ? STL_STATIC : STL_DYNAMIC; \
+ 		(con).capacity = c;					\
+	} while (0)
+
+
+#define STL_INIT_DCONTAINER(con, dtype, st, c)			\
+	do {								\
+		(con).container =					\
+			(dtype *)					\
+			stl_alloc_container(c * sizeof(dtype));		\
+		(con).size = 0;						\
+		(con).dtype_size = sizeof(dtype);			\
+		(con).st_size = sizeof(st);				\
+		(con).addr = (unsigned char *) (con).container;		\
+		(con).type = (STL_IS_DYNAMIC_CONTAINER(con)) ? STL_DYNAMIC : STL_STATIC; \
  		(con).capacity = c;					\
 	} while (0)
 
