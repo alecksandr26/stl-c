@@ -14,50 +14,79 @@
 
 #include <stddef.h>
 #include "def.h"
+#include "mem.h"
 
 #define STL_DEFAULT_CONTAINER_CAPACITY 1024
 #define STL_DEFAULT_DCONTAINER_CAPACITY 1024
 #define STL_DEFAULT_DCONTAINER_INCREASE_RATE 2
 
+
 extern unsigned long stl_heapaddr;
 
+typedef enum {
+	STL_STATIC = 0,
+	STL_DYNAMIC
+} CONTAINER_TYPE;
+
 typedef struct {	
-	size_t capacity, dtype_size, st_size;
-	unsigned char *container;
+	size_t capacity, dtype_size, st_size, size;
+	CONTAINER_TYPE type;
+	unsigned char *addr, *container;
 } __stl_con_t;
 
-#define __STL_CONTAINER_SELECT_SIZE(X, ...) X
-#define __STL_IS_DYNAMIC_CONTAINER(X) (((unsigned long) X) < stl_heapaddr)
-#define STL_CONTAINER(cond, dtype, dcapacity, ...)			\
+#define STL_CONTAINER_SIZE sizeof(__stl_con_t)
+
+#define __STL_CONTAINER_SELECT_CAPACITY(X, ...) (X)
+
+#define STL_IS_DYNAMIC_CONTAINER(con) (STL_CONTAINER_SIZE == sizeof(con))
+
+#define STL_CONTAINER(cond, dtype, def_capacity, ...)			\
 	struct  {							\
-		size_t capacity, dtype_size, st_size;				\
+		size_t capacity, dtype_size, st_size, size;		\
+		CONTAINER_TYPE type;					\
+		unsigned char *addr;					\
 		__STL_IF_ELSE(cond)					\
-		     (dtype *container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) dcapacity)]) \
-		     (dtype container[__STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) dcapacity)]); \
+		     (dtype *container[__STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
+								       __VA_OPT__(,) def_capacity)]) \
+		     (dtype container[__STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
+								      __VA_OPT__(,) def_capacity)]); \
 	}
 
 #define STL_DCONTAINER(cond, dtype)					\
 	struct  {							\
-		size_t capacity, dtype_size, st_size;			\
+		size_t capacity, dtype_size, st_size, size;		\
+		CONTAINER_TYPE type;					\
+		unsigned char *addr;					\
 		__STL_IF_ELSE(cond)					\
 		     (dtype **container)				\
 		     (dtype *container);				\
 	}
 
-#define STL_INIT_D_CONTAINER_DTYPE_SIZE(con, dtype)	\
-	con.dtype_size = sizeof(dtype)
+#define STL_INIT_CONTAINER(con, dtype, st, c)				\
+	do {								\
+		(con).size = 0;						\
+		(con).dtype_size = sizeof(dtype);			\
+		(con).st_size = sizeof(st);				\
+		(con).addr = (unsigned char *) (con).container;		\
+		(con).type = (sizeof(con) > STL_CONTAINER_SIZE) ? STL_STATIC : STL_DYNAMIC; \
+ 		(con).capacity = c;					\
+	} while (0)
 
-#define STL_INIT_D_CONTAINER_ST_SIZE(con, st)				\
-	con.st_size = sizeof(st)					\
-		
-#define STL_INIT_D_CONTAINER_CAPACITY(con)				\
-	con.capacity = stl_init_con_capacity((unsigned char *) con.container, \
-					     sizeof(con.container),	\
-					     con.dtype_size)
+
+#define STL_INIT_DCONTAINER(con, dtype, st, c)			\
+	do {								\
+		(con).container =					\
+			(dtype *)					\
+			stl_alloc_container(c * sizeof(dtype));		\
+		(con).size = 0;						\
+		(con).dtype_size = sizeof(dtype);			\
+		(con).st_size = sizeof(st);				\
+		(con).addr = (unsigned char *) (con).container;		\
+		(con).type = (STL_IS_DYNAMIC_CONTAINER(con)) ? STL_DYNAMIC : STL_STATIC; \
+ 		(con).capacity = c;					\
+	} while (0)
 
 #define STL_CONTAINER_CAPACITY(con)		\
-	con.capacity
-
-extern size_t stl_init_con_capacity(unsigned char *container, size_t static_container_size, size_t dtype_size);
+	(con).capacity
 
 #endif

@@ -12,15 +12,13 @@
 #define STL_MEM_INCLUDED
 
 #include <stddef.h>
-#include <except.h>
 
-#define stl_free(structure) stl_free_struct((void *) structure, \
-					    sizeof(*structure), \
-					    structure->con.capacity * sizeof(structure->con.container[0]))
 extern unsigned long stl_heapaddr;
 
-extern unsigned char *stl_alloc_struct(size_t struct_size, size_t container_size);
-extern void stl_realloc_container(unsigned char *struct_ptr, size_t struct_size, size_t new_container_size);
-extern void stl_free_struct(unsigned char *struct_ptr, size_t struct_size, size_t container_size);
+extern unsigned char *stl_alloc_struct(size_t st_size);
+extern unsigned char *stl_alloc_container(size_t container_size);
+extern unsigned char *stl_realloc_container(unsigned char *container_ptr, size_t new_container_size);
+extern void stl_free_container(unsigned char *container_ptr, size_t container_size);
+extern void stl_free_struct(unsigned char *st_ptr);
 
 #endif

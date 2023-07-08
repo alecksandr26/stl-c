@@ -4,5 +4,13 @@
 - Create the tests for the stack structure [X]
 - Work on the idea of a general allocator for any structure type [ ]
 --- 2023-05-28 ---
-- Create a macro for initializing the container [ ]
-- Solve that bug that allocs less capacity that the required [ ]
+- Create a macro for initializing the container [X]
+- Solve that bug that allocs less capacity that the required [X]
+--- 2023-05-31 ---
+- Refactored and format the whole code [ ]
+- Update the logical indexes for the uelements in the list [ ]
+- Try to optimize the decisións of the phisically address selection in the list [ ]
+  an idea could be find the shortest path to the destination
+--- 2023-06-05 ---
+- Start doing profiling [ ]
+- See how to swap elements from the in the insertion [ ]

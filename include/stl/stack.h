@@ -23,19 +23,16 @@
 #define STL_DEFAULT_DSTACK_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
 
 typedef struct {
-	size_t head;
 	__stl_con_t con;
 } __stl_stack_t;
 
 #define __stl_def_ptr_stack(one, dtype, ...)	\
 	typedef struct {	 \
-		size_t head;	 \
 		STL_CONTAINER(1, dtype, STL_DEFAULT_STACK_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_stack_t_ptr_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
-#define __stl_def_stack(dtype, ...)	\
-	typedef struct {	 \
-		size_t head;	 \
+#define __stl_def_stack(dtype, ...)					\
+	typedef struct {						\
 		STL_CONTAINER(0, dtype, STL_DEFAULT_STACK_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_stack_t_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
@@ -45,14 +42,12 @@ typedef struct {
 	     (__stl_def_stack(dtype __VA_OPT__(,) __VA_ARGS__))
 
 #define __stl_def_ptr_dstack(one, dtype)	\
-	typedef struct {	 \
-		size_t head;	 \
-		STL_DCONTAINER(1, dtype) con; \
+	typedef struct {			\
+		STL_DCONTAINER(1, dtype) con;	\
 	} __stl_dstack_t_ptr_ ## dtype
 
 #define __stl_def_dstack(dtype)			\
 	typedef struct {			\
-		size_t head;			\
 		STL_DCONTAINER(0, dtype) con;	\
 	} __stl_dstack_t_ ## dtype 
 
@@ -84,46 +79,14 @@ typedef struct {
 	     (__stl_dstack_ptr(dtype))				\
 	     (__stl_dstack(dtype))
 
-#define new_dstack(dtype, ...)						\
-	STL_IF_ELSE_PTR_DTYPE(dtype)					\
-	     ((__stl_dstack_ptr(dtype) *))				\
-	     ((__stl_dstack(dtype) *))					\
-	     stl_alloc_struct(STL_IF_ELSE_PTR_DTYPE(dtype)		\
-			      (sizeof(__stl_dstack_ptr(dtype)))		\
-			      (sizeof(__stl_dstack(dtype))),		\
-			      STL_IF_ELSE_PTR_DTYPE(dtype)(sizeof(_STL_SECOND(dtype) *))(sizeof(dtype)) \
-			      * __STL_CONTAINER_SELECT_SIZE(__VA_ARGS__ __VA_OPT__(,) \
-							    STL_DEFAULT_DSTACK_CAPACITY))
+#define stack_push(stack, item)						\
+	*((typeof((stack).con.container[0]) *) __stl_stack_inc((__stl_stack_t *) &(stack))) = item
+#define stack_pop(stack) *((typeof((stack).con.container[0]) *) __stl_stack_dec((__stl_stack_t *) &(stack)))
+#define stack_top(stack) (stack).con.container[__stl_stack_top((__stl_stack_t *) &(stack))]
 
-#define stack_init(stack, ...)				\
-	do {						\
-		(stack).head = 0;			\
-		STL_INIT_D_CONTAINER_DTYPE_SIZE((stack).con, (stack).con.container[0]); \
-		STL_INIT_D_CONTAINER_ST_SIZE((stack).con, (stack));	\
-		STL_INIT_D_CONTAINER_CAPACITY((stack).con);		\
-	} while (0)
-
-#define stack_push(stack, item) (stack).con.container[stl_stack_inc((__stl_stack_t *) &(stack))] = item
-#define stack_top(stack) (stack).con.container[stl_stack_top((__stl_stack_t *) &(stack))]
-#define stack_pop(stack) (stack).con.container[stl_stack_dec((__stl_stack_t *) &(stack))]
-#define stack_size(stack) (stack).head
-#define stack_capacity(stack) (stack).con.capacity
-#define stack_empty(stack) ((stack).head == 0)
-#define dstack_push(dstack, item)					\
-	*((typeof(dstack->con.container[0]) *) stl_dstack_inc((__stl_stack_t *) dstack)) = item
-#define dstack_pop(dstack) *((typeof(dstack->con.container[0]) *) stl_dstack_dec((__stl_stack_t *) dstack))
-#define dstack_top(dstack) stack_top(*dstack)
-#define dstack_init(dstack) stack_init(*dstack)
-#define dstack_size(dstack) stack_size(*dstack)
-#define dstack_empty(dstack) stack_empty(*dstack)
-#define dstack_capacity(dstack) stack_capacity(*dstack)
-
-extern Except NotEnoughCapacityAtStructure, EmptyStructure;
-extern size_t stl_stack_inc(__stl_stack_t *stack);
-extern size_t stl_stack_dec(__stl_stack_t *stack);
-extern size_t stl_stack_top(__stl_stack_t *stack);
-extern unsigned char *stl_dstack_inc(__stl_stack_t *stack);
-extern unsigned char *stl_dstack_dec(__stl_stack_t *stack);
+extern unsigned char *__stl_stack_inc(__stl_stack_t *stack);
+extern unsigned char *__stl_stack_dec(__stl_stack_t *stack);
+extern size_t __stl_stack_top(__stl_stack_t *stack);
 
 #define mul_def_stack(dtype, X, ...) def_stack(dtype, X) __VA_OPT__(; mul_def_stack1(dtype, __VA_ARGS__))
 #define mul_def_stack1(dtype, X, ...) def_stack(dtype, X) __VA_OPT__(; mul_def_stack2(dtype, __VA_ARGS__))
