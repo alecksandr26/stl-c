@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "../include/stl/list.h"
+#include "../include/stl/gen.h"
 #include "../include/stl/ex.h"
 
 static size_t comp_pind(__stl_list_t *list, size_t lind)
@@ -34,7 +35,7 @@ static __stl_linkedlist_t *comp_head(__stl_list_t *list, size_t n)
 {
 	assert(list != NULL);
 	
-	if (list->size == 0)
+	if (st_size(*list) == 0)
 		return NULL;
 
 	__stl_linkedlist_t *head;
@@ -157,7 +158,7 @@ size_t list_fetch_byindex(__stl_list_t *list, size_t ind)
 {
 	assert(list != NULL && "Can't be null");
 
-	if (list_size(*list) <= ind)
+	if (st_size(*list) <= ind)
 		throw(InvalidIndex);
 
 	return comp_pind(list, ind);

@@ -40,13 +40,13 @@ OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stack.o\
 				queue.o \
 				array.o\
-				list.o)
+				linked.o)
 
 EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\
 						example_stack.out\
 						example_queue.out\
 						example_array.out\
-						example_list.out)
+						example_linked.out)
 
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
 

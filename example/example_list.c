@@ -1,26 +1,28 @@
 #include <stdio.h>
 
 #include "../include/stl/list.h"
+#include "../include/stl/gen.h"
 #include "../include/stl/ex.h"
+
 
 def_list(float);
 
 void print_list_attributes(list(float) *list)
 {
-	printf("size_st: %zu\n", stack_size(*list->st));
-	printf("size: %zu\n", list_size(*list));
+	printf("size_st: %zu\n", st_size(list->pind_deleted));
+	printf("size: %zu\n", st_size(*list));
 	printf("size_con: %zu\n", list->size_con);
 	printf("size_ul: %zu\n", list->size_ul);
-	printf("capacity: %zu\n", list_capacity(*list));
-	printf("empty: %s\n", list_empty(*list) ? "True" : "False");
+	printf("capacity: %zu\n", st_capacity(*list));
+	printf("empty: %s\n", st_empty(*list) ? "True" : "False");
 	
 }
 
 void print_float_list(list(float) *list)
 {
-	for (size_t i = 0; i < list_size(*list); i++) {
+	for (size_t i = 0; i < st_size(*list); i++) {
 		printf("%f", list_index(*list, i));
-		if (i < list_size(*list) - 1)
+		if (i < st_size(*list) - 1)
 			printf(", ");
 	}
 	putchar('\n');
@@ -29,7 +31,7 @@ void print_float_list(list(float) *list)
 int main(void)
 {
 	list(float) list;
-	list_init(list);
+	st_init(list);
 
 	puts("\nInitial list");
 	list_append(list, 1.0);
@@ -89,13 +91,13 @@ int main(void)
 
 
 	puts("\nAftert inserting elements");
-	printf("Inserting the 20.0 at %zu\n", list_size(list) - 2);
-	list_insert(list, 20.0, list_size(list) - 2);
+	printf("Inserting the 20.0 at %zu\n", st_size(list) - 2);
+	list_insert(list, 20.0, st_size(list) - 2);
 	
 	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10, 20, 13, 14 */
 	
-	printf("Inserting the 21.0 at %zu\n", list_size(list) - 1);
-	list_insert(list, 21.0, list_size(list) - 1);
+	printf("Inserting the 21.0 at %zu\n", st_size(list) - 1);
+	list_insert(list, 21.0, st_size(list) - 1);
 	print_float_list(&list); /* list: 1, 3, 5, 6, 7, 9, 10, 20, 13, 21, 14 */
 
 		
