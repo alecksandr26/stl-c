@@ -82,7 +82,7 @@ typedef struct {
 	     (__stl_darray_ptr(dtype))			\
 	     (__stl_darray(dtype))
 
-#define array_append(array, item)					\
+#define array_push(array, item)						\
 	*((typeof((array).con.container[0]) *)				\
 	  __stl_array_insert_byindex((__stl_array_t *) &(array), st_size(array))) = item
 
@@ -94,20 +94,20 @@ typedef struct {
 	  __stl_array_insert_byindex((__stl_array_t *) &(array), index)) = item
 
 #define array_rem(array, index)			\
-	__stl_array_insert_rem((__stl_array_t *) &(array), index)
+	__stl_array_rem((__stl_array_t *) &(array), index)
 
 #define array_pop(array)			\
 	*((typeof((array).con.container[0]) *)  __stl_array_pop((__stl_array_t *) &(array)))
 
 #define array_front(array)			\
-	array.con.container[0]
+	array.con.container[__stl_array_at((__stl_array_t *) &(array), 0)]
 
 #define array_back(array)			\
-	array.con.container[st_size(array) - 1]
+	array.con.container[__stl_array_at((__stl_array_t *) &(array), st_size(array) - 1)]
 
 extern unsigned char *__stl_array_insert_byindex(__stl_array_t *array, size_t ind);
 extern unsigned char *__stl_array_pop(__stl_array_t *array);
-extern void __stl_array_insert_rem(__stl_array_t *array, size_t ind);
+extern void __stl_array_rem(__stl_array_t *array, size_t ind);
 extern size_t __stl_array_at(__stl_array_t *array, size_t index);
 
 #endif

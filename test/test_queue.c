@@ -9,7 +9,7 @@ TESTCASE(InitStaticQueue) {
 	
 	TEST(StaticAllocation) {
 		queue(int) queue;
-		st_init(queue);
+		init_st(queue);
 
 		ASSERT(STL_DEFAULT_QUEUE_CAPACITY == st_capacity(queue),
 		       "Should have the default capacity");
@@ -17,7 +17,7 @@ TESTCASE(InitStaticQueue) {
 
 	TEST(DefinedStaticAllocation) {
 		queue(int, 11) queue;
-		st_init(queue);
+		init_st(queue);
 
 		ASSERT(st_capacity(queue) == 11,
 		       "Should have the default capacity");
@@ -31,7 +31,7 @@ TESTCASE(QueueAddition) {
 	
 	TEST(QueueTrivialAddition) {
 		queue(int) queue;
-		st_init(queue);
+		init_st(queue);
 
 		queue_push(queue, 10);
 		ASSERT(st_size(queue) == 1, "The size of the queue should be increaded");
@@ -44,7 +44,7 @@ TESTCASE(QueueAddition) {
 
 	TEST(QueueAddition) {
 		queue(int, 10) queue;
-		st_init(queue);
+		init_st(queue);
 		
 		queue_push(queue, 10);
 		queue_push(queue, 20);
@@ -56,7 +56,7 @@ TESTCASE(QueueAddition) {
 
 	TEST(ExhaustingAddition) {
 		queue(int) queue;
-		st_init(queue);
+		init_st(queue);
 
 		try {
 			for (int i = 0; i < STL_DEFAULT_QUEUE_CAPACITY; i++)
@@ -75,7 +75,7 @@ TESTCASE(QueueAddition) {
 TESTCASE(QueueDeleting) {
 	def_queue(int);
 	queue(int) queue;
-	st_init(queue);
+	init_st(queue);
 	
 	TEST(QueueTrivialDeletion) {
 		queue_push(queue, 10);
@@ -116,24 +116,24 @@ TESTCASE(DynamicAllocationQueue) {
 	
 	TEST(InitDynamic) {
 		dqueue(int) dqueue;
-		dst_init(dqueue, 100);
+		init_dst(dqueue, 100);
 
 		ASSERT(dqueue.con.container != NULL, "Can't be null");
 		
 		ASSERT(st_capacity(dqueue) >= 100, "Should be greater or equal to 100");
 		
-		st_free(dqueue);
+		stl_free(dqueue);
 	}
 
 	TEST(InitDynamic) {
 		dqueue(int) dqueue;
-		dst_init(dqueue);
+		init_dst(dqueue);
 
 		ASSERT(dqueue.con.container != NULL, "Can't be null");
 
 		ASSERT(st_capacity(dqueue) >= STL_DEFAULT_DQUEUE_CAPACITY);
 		
-		st_free(dqueue);
+		stl_free(dqueue);
 	}
 } ENDTESTCASE
 
@@ -142,7 +142,7 @@ TESTCASE(DynamicQueueAddition) {
 	def_dqueue(int);
 	
 	dqueue(int) dqueue;
-	dst_init(dqueue);
+	init_dst(dqueue);
 	
 	TEST(QueueTrivialAddition) {
 		queue_push(dqueue, 10);
@@ -156,7 +156,7 @@ TESTCASE(DynamicQueueAddition) {
 
 	TEST(QueueAddition) {
 		dqueue(int) dq;
-		dst_init(dq);
+		init_dst(dq);
 		
 		queue_push(dq, 10);
 		queue_push(dq, 20);
@@ -165,7 +165,7 @@ TESTCASE(DynamicQueueAddition) {
 		ASSERT(10 == queue_front(dq), "After some insertions it should be 10");
 		ASSERT(queue_back(dq) == 40, "SHould be the last element value");
 		
-		st_free(dq);
+		stl_free(dq);
 	}
 
 	TEST(ExhaustingAddition) {
@@ -181,14 +181,14 @@ TESTCASE(DynamicQueueAddition) {
 		       "Should be equal to its max capacity");
 	}
 	
-	st_free(dqueue);
+	stl_free(dqueue);
 } ENDTESTCASE
 
 
 TESTCASE(DynamicQueueDeleting) {
 	def_dqueue(int);
 	dqueue(int) dqueue;
-	dst_init(dqueue);
+	init_dst(dqueue);
 	
 	TEST(QueueTrivialDeletion) {
 		queue_push(dqueue, 10);
@@ -223,14 +223,14 @@ TESTCASE(DynamicQueueDeleting) {
 		} endtry;
 	}
 	
-	st_free(dqueue);
+	stl_free(dqueue);
 } ENDTESTCASE
 
 
 TESTCASE(TestingQueuePointerSupport) {
 	def_queue(d_ptr(float));
 	queue(d_ptr(float)) queue;
-	st_init(queue);
+	init_st(queue);
 	float var = 2.0;
 	
 	TEST(TrivialAddition) {

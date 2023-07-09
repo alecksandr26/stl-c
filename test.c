@@ -16,7 +16,9 @@ int main()
 	INCLUDE_SUIT("test_queue.c", SuitTestQueue);
 	INCLUDE_SUIT("test_stack.c", SuitTestStack);
 	INCLUDE_SUIT("test_con.c", SuitTestCon);
-
+	INCLUDE_SUIT("test_new_st.c", SuitNewFunc);
+	INCLUDE_SUIT("test_array.c", SuitTestArray);
+	
 	ATTACH_EXTRA_FLAGS("lib/libstl.a");
 	
 	ACTIVE_VALGRIND();
