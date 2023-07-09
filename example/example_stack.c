@@ -33,7 +33,7 @@ void example_float(void)
 	puts("Static structrue");
 
 	stack(float, 100) stack;
-	st_init(stack);
+	init_st(stack);
 	prints_attributes(&stack);
 	
 	puts("Pushig...");
@@ -52,9 +52,9 @@ void example_float(void)
 	
 	/* Dynamic structure */
 	puts("\nDynamic structrue");
-	dstack(float) *dstack = st_new(dstack(float));
+	dstack(float) *dstack = new_st(dstack(float));
 	
-	dst_init(*dstack);
+	init_dst(*dstack);
 	print_d_attributes_float(dstack);
 	
 	puts("Pushing...");
@@ -81,14 +81,14 @@ void example_float(void)
 
 	puts("\n");
 	
-	st_free(*dstack);
+	stl_free(*dstack);
 }
 
 
 void example_dynamic(void)
 {
 	dstack(int) ds;
-	dst_init(ds, 100);
+	init_dst(ds, 100);
 
 	stack_push(ds, 10);
 	stack_push(ds, 20);
@@ -98,7 +98,7 @@ void example_dynamic(void)
 
 	print_d_attributes_int(&ds);
 
-	st_free(ds);
+	stl_free(ds);
 }
 
 int main()
@@ -106,7 +106,7 @@ int main()
 	def_stack(d_ptr(float));
 
 	stack(d_ptr(float)) stack;
-	st_init(stack);
+	init_st(stack);
 
 	printf("%p\n", (void *) stack.con.container);
 
@@ -122,8 +122,8 @@ int main()
 	example_float();
 	
 	def_stack(d_ptr(float), 100);
-	stack(d_ptr(float), 100) *stack_ptr = st_new(stack(d_ptr(float), 100));
-	st_init(*stack_ptr);
+	stack(d_ptr(float), 100) *stack_ptr = new_st(stack(d_ptr(float), 100));
+	init_st(*stack_ptr);
 
 	stack_push(*stack_ptr, &var1);
 	stack_push(*stack_ptr, &var2);
@@ -133,7 +133,7 @@ int main()
 	printf("%f\n", *stack_top(*stack_ptr));
 	
 
-	st_free(*stack_ptr);
+	stl_free(*stack_ptr);
 
 	example_dynamic();
 

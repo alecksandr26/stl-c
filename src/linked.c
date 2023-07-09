@@ -11,7 +11,7 @@ size_t __stl_linked_front(__stl_linked_t *linked)
 	if (st_empty(*linked))
 		throw(EmptyStructure);
 
-	return linked->front;
+	return (size_t) linked->front;
 }
 
 size_t __stl_linked_back(__stl_linked_t *linked)
@@ -21,7 +21,7 @@ size_t __stl_linked_back(__stl_linked_t *linked)
 	if (st_empty(*linked))
 		throw(EmptyStructure);
 	
-	return linked->back;
+	return (size_t) linked->back;
 }
 
 __stl_link_node_t *__stl_linked_ins_after_byindex(__stl_linked_t *linked, int index)
@@ -30,23 +30,42 @@ __stl_link_node_t *__stl_linked_ins_after_byindex(__stl_linked_t *linked, int in
 
 	if ((int) st_size(*linked) < index)
 		throw(InvalidIndex);
-
-	if (st_size(*linked) + 1 == st_capacity(*linked)) {
+	
+	if (st_size(*linked) == st_capacity(*linked)) {
 		if (linked->con.type == STL_STATIC)
 			throw(NotEnoughCapacity);
+		linked->con.addr = linked->con.container =
+			stl_realloc_container(linked->con.addr,
+					      st_capacity(*linked)
+					      * STL_DEFAULT_DLINKED_INCREASE_RATE
+					      * linked->con.dtype_size);
+		st_capacity(*linked) = st_capacity(*linked) * STL_DEFAULT_DLINKED_INCREASE_RATE;
 	}
 	
 	__stl_link_node_t *curr;
+	int curr_index;
 
-	curr = (__stl_link_node_t *) (linked->con.addr + (st_size(*linked) * linked->con.dtype_size));
-	curr->prev = curr->next = NULL;
-	if (index != -1) {	/* Link prev */
-		curr->prev = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
-		curr->next = curr->prev->next;
-		curr->prev->next = curr;
+	if (linked->deleted_head == -1) {
+		curr_index = st_size(*linked);
+	} else {
+		curr_index = linked->deleted_head;
+		linked->deleted_head = ((__stl_link_node_t *) (linked->con.addr
+							       + (curr_index * linked->con.dtype_size)))->next;
 	}
 
-	if (curr->next == NULL)
+	curr = (__stl_link_node_t *) (linked->con.addr + (curr_index * linked->con.dtype_size));
+
+	curr->prev = curr->next = -1;
+	if (index != -1) {	/* Link prev */
+		curr->prev = index;
+		curr->next = ((__stl_link_node_t *) (linked->con.addr
+						     + (index * linked->con.dtype_size)))->next;
+		((__stl_link_node_t *) (linked->con.addr
+					+ (index * linked->con.dtype_size)))->next = curr_index;
+	} else
+		linked->front = linked->back = 0;
+
+	if (curr->next == -1)
 		linked->back = st_size(*linked);
 	
 	st_size(*linked)++;
@@ -61,22 +80,41 @@ __stl_link_node_t *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int ind
 	if ((int) st_size(*linked) < index)
 		throw(InvalidIndex);
 
-	if (st_size(*linked) + 1 == st_capacity(*linked)) {
+	if (st_size(*linked) == st_capacity(*linked)) {
 		if (linked->con.type == STL_STATIC)
 			throw(NotEnoughCapacity);
+		linked->con.addr = linked->con.container =
+			stl_realloc_container(linked->con.addr,
+					      st_capacity(*linked)
+					      * STL_DEFAULT_DLINKED_INCREASE_RATE
+					      * linked->con.dtype_size);
+		st_capacity(*linked) = st_capacity(*linked) * STL_DEFAULT_DLINKED_INCREASE_RATE;
 	}
 	
 	__stl_link_node_t *curr;
+	int curr_index;
 
-	curr = (__stl_link_node_t *) (linked->con.addr + (st_size(*linked) * linked->con.dtype_size));
-	curr->prev = curr->next = NULL;
-	if (index != -1) {	/* Link prev */
-		curr->next = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
-		curr->prev = curr->next->prev;
-		curr->next->prev = curr;
+	if (linked->deleted_head == -1) {
+		curr_index = st_size(*linked);
+	} else {
+		curr_index = linked->deleted_head;
+		linked->deleted_head = ((__stl_link_node_t *) (linked->con.addr
+							       + (curr_index * linked->con.dtype_size)))->next;
 	}
 
-	if (curr->prev == NULL)
+	curr = (__stl_link_node_t *) (linked->con.addr + (curr_index * linked->con.dtype_size));
+	
+	curr->prev = curr->next = -1;
+	if (index != -1) {	/* Link prev */
+		curr->next = index;
+		curr->prev = ((__stl_link_node_t *) (linked->con.addr
+						     + (index * linked->con.dtype_size)))->prev;
+		((__stl_link_node_t *) (linked->con.addr
+					+ (index * linked->con.dtype_size)))->prev = curr_index;
+	} else
+		linked->front = linked->back = 0;
+
+	if (curr->prev == -1)
 		linked->front = st_size(*linked);
 	
 	st_size(*linked)++;
@@ -87,37 +125,75 @@ __stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t index
 {
 	assert(linked != NULL);
 
-	if (st_size(*linked) < index)
+	if (st_size(*linked) <= index)
 		throw(InvalidIndex);
-
-	__stl_link_node_t *curr, *next, *prev;
-	curr = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
-
-	next = curr->next;
-	prev = curr->prev;
-
-	if (next) {
-		next->prev = curr->prev;
-		if (index == linked->front)
-			linked->front = (size_t )((unsigned char *) next - linked->con.addr)
-				/ linked->con.dtype_size;
+	
+	if (linked->con.type == STL_DYNAMIC
+	    && st_size(*linked) <= st_capacity(*linked) / STL_DEFAULT_DLINKED_INCREASE_RATE) {
+		linked->con.addr = linked->con.container =
+			stl_realloc_container(linked->con.addr,
+					      ((st_capacity(*linked)
+						/  STL_DEFAULT_DLINKED_INCREASE_RATE) + 1)
+					      * linked->con.dtype_size);
+		st_capacity(*linked) = st_capacity(*linked) / STL_DEFAULT_DLINKED_INCREASE_RATE + 1;
 	}
 
-	if (prev) {
+	__stl_link_node_t *curr;
+	int next_index, prev_index;
+	curr = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
+
+	next_index = curr->next;
+	prev_index = curr->prev;
+	
+	if (next_index != -1) {
+		__stl_link_node_t *next = (__stl_link_node_t *) (linked->con.addr
+								 + (next_index * linked->con.dtype_size));
+		next->prev = curr->prev;
+		if (index == (size_t) linked->front)
+			linked->front = next_index;
+	}
+
+	if (prev_index != -1) {
+		__stl_link_node_t *prev = (__stl_link_node_t *) (linked->con.addr
+								 + (prev_index * linked->con.dtype_size));
 		prev->next = curr->next;
-		curr->prev = NULL;
-		if (index == linked->back)
-			linked->back = (size_t) ((unsigned char *) prev - linked->con.addr)
-				/ linked->con.dtype_size;
+		if (index == (size_t) linked->back)
+			linked->back = prev_index;
 	}
 
 	/* Link the deleted cells */
 	curr->next = linked->deleted_head;
-	linked->deleted_head = curr;
+	linked->deleted_head = index;
 
 	st_size(*linked)--;
-	
 	return curr;
+}
+
+size_t __stl_linked_at(__stl_linked_t *linked, size_t index)
+{
+	assert(linked != NULL);
+
+	if (st_empty(*linked))
+		throw(EmptyStructure);
+
+	if (st_size(*linked) <= index)
+		throw(InvalidIndex);
+
+	size_t c1, c2;
+	int front, back;
+	front = linked->front;
+	back = linked->back;
+	
+	c1 = 0;
+	c2 = st_size(*linked) - 1;
+	while (c1 != index && c2 != index) {
+		front = ((__stl_link_node_t *) (linked->con.addr + (front * linked->con.dtype_size)))->next;
+		back = ((__stl_link_node_t *) (linked->con.addr + (back * linked->con.dtype_size)))->prev;
+		c1++;
+		c2--;
+	}
+
+	return (c1 == index) ? front : back;
 }
 
 

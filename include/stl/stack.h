@@ -17,22 +17,26 @@
 #include "con.h"
 #include "mem.h"
 #include "def.h"
+#include "init.h"
 
 #define STL_DEFAULT_STACK_CAPACITY STL_DEFAULT_CONTAINER_CAPACITY
 #define STL_DEFAULT_DSTACK_CAPACITY STL_DEFAULT_DCONTAINER_CAPACITY
 #define STL_DEFAULT_DSTACK_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
 
 typedef struct {
+	__stl_stack_type type;
 	__stl_con_t con;
 } __stl_stack_t;
 
 #define __stl_def_ptr_stack(one, dtype, ...)	\
-	typedef struct {	 \
+	typedef struct {						\
+		__stl_stack_type type;					\
 		STL_CONTAINER(1, dtype, STL_DEFAULT_STACK_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_stack_t_ptr_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
 #define __stl_def_stack(dtype, ...)					\
 	typedef struct {						\
+		__stl_stack_type type;					\
 		STL_CONTAINER(0, dtype, STL_DEFAULT_STACK_CAPACITY __VA_OPT__(,) __VA_ARGS__) con; \
 	} __stl_stack_t_ ## dtype ## __VA_OPT__(_) ## __VA_ARGS__
 
@@ -43,11 +47,13 @@ typedef struct {
 
 #define __stl_def_ptr_dstack(one, dtype)	\
 	typedef struct {			\
+		__stl_stack_type type;		\
 		STL_DCONTAINER(1, dtype) con;	\
 	} __stl_dstack_t_ptr_ ## dtype
 
 #define __stl_def_dstack(dtype)			\
 	typedef struct {			\
+		__stl_stack_type type;		\
 		STL_DCONTAINER(0, dtype) con;	\
 	} __stl_dstack_t_ ## dtype 
 

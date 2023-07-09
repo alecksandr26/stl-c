@@ -1,6 +1,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/stl/array.h"
 #include "../include/stl/gen.h"
 #include "../include/stl/ex.h"
@@ -40,8 +41,8 @@ unsigned char *__stl_array_pop(__stl_array_t *array)
 	if (st_size(*array) == 0)
 		throw(EmptyStructure);
 
-	if (st_size(*array) <= st_capacity(*array) / STL_DEFAULT_DARRAY_INCREASE_RATE
-	    && array->con.type == STL_DYNAMIC) {
+	if (array->con.type == STL_DYNAMIC
+	    && st_size(*array) <= st_capacity(*array) / STL_DEFAULT_DARRAY_INCREASE_RATE) {
 		array->con.addr = array->con.container =
 			stl_realloc_container(array->con.addr,
 					      ((st_capacity(*array)
