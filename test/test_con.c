@@ -1,7 +1,12 @@
 #include <unittest.h>
 #include <malloc.h>
 #include <string.h>
+
 #include "../include/stl/con.h"
+
+typedef struct {
+		char foo;
+	} foo;
 
 TESTCASE(InitStaticContainer) {
 	typedef struct  {
@@ -15,17 +20,15 @@ TESTCASE(InitStaticContainer) {
 	
 	TEST(InitStatic) {
 		STL_CONTAINER(0, float, 10) container; /* Create the container */
-		STL_INIT_D_CONTAINER_DTYPE_SIZE(container, float);
-		STL_INIT_D_CONTAINER_CAPACITY(container);
-
+		STL_INIT_CONTAINER(container, float, foo, sizeof(container.container));
+		
 		ASSERT(sizeof(container.container) >= 10 * sizeof(float),
 		       "It shold create the frame of that size");
 	}
 
 	TEST(InitStaticStruct) {
 		STL_CONTAINER(0, person, 10) container; /* Create the container */
-		STL_INIT_D_CONTAINER_DTYPE_SIZE(container, float);
-		STL_INIT_D_CONTAINER_CAPACITY(container);
+		STL_INIT_CONTAINER(container, person, foo, sizeof(container.container));
 		
 		ASSERT(sizeof(container.container) >= 10 * sizeof(person));
 		ASSERT(container.capacity >= 10, "The capacity should be 10");
@@ -33,13 +36,13 @@ TESTCASE(InitStaticContainer) {
 
 	TEST(IsStatic) {
 		STL_CONTAINER(0, float, 10) container; /* Create the container */
-		ASSERT(__STL_IS_DYNAMIC_CONTAINER(container.container) == 0, "It should be false");
+		ASSERT(STL_IS_DYNAMIC_CONTAINER(container.container) == 0, "It should be false");
 	}
 
 	TEST(AssigningSTsize) {
 		STL_CONTAINER(0, float, 10) container; /* Create the container */
-		STL_INIT_D_CONTAINER_ST_SIZE(container, stack);
-
+		STL_INIT_CONTAINER(container, float, stack, sizeof(container.container));
+		
 		ASSERT(container.st_size == sizeof(stack), "IT should have this structure size");
 	}
 
@@ -57,65 +60,38 @@ TESTCASE(InitDynamicContainer) {
 	} stack;
 
 	STL_DCONTAINER(0, float) dcontainer; /* Create the dynamic container */
+	STL_INIT_DCONTAINER(dcontainer, float, stack, 10);
 
-	/* Alloc memory */
-	if ((dcontainer.container = malloc(sizeof(float) * 10)) == NULL) {
-		fprintf(stderr, "Error running the testcase");
-		abort();
-	}
-
-	stl_heapaddr = ((unsigned long) dcontainer.container) + (sizeof(float) * 10);
-	
 	TEST(InitDynamic) {
-		STL_INIT_D_CONTAINER_DTYPE_SIZE(dcontainer, float);
-		STL_INIT_D_CONTAINER_CAPACITY(dcontainer);
 		ASSERT(dcontainer.capacity >= 10,
 		       "It shold create the frame of that size");
 	}
 
 	TEST(InitDynamicStruct) {
 		STL_DCONTAINER(0, person) dcontainer2; /* Create the dynamic container */
+
+		STL_INIT_DCONTAINER(dcontainer2, person, foo, 10);
 		
-		/* Alloc memory */
-		if ((dcontainer2.container = malloc(sizeof(person) * 10)) == NULL) {
-			fprintf(stderr, "Error running the testcase");
-			abort();
-		}
-
-		stl_heapaddr = ((unsigned long) dcontainer2.container) + (sizeof(person) * 10);
-
 		ASSERT(dcontainer2.container != NULL, "Shouldn't be null");
-
-		STL_INIT_D_CONTAINER_DTYPE_SIZE(dcontainer2, person);
-		STL_INIT_D_CONTAINER_CAPACITY(dcontainer2);
 
 		/* Put an element */
 		((person *) dcontainer2.container)[0].age = 33;
 		strcpy(((person *) dcontainer2.container)[0].name, "josh");
 		ASSERT(dcontainer2.capacity >= 10, "The capacity should be 10");
-		stl_heapaddr = ((unsigned long) dcontainer2.container);
-		free(dcontainer2.container);
+		stl_free_container(dcontainer2.addr, dcontainer.capacity);
 	}
 
 	TEST(IsDynamic) {
-		ASSERT(__STL_IS_DYNAMIC_CONTAINER(dcontainer.container) == 1, "It should be true");
+		ASSERT(STL_IS_DYNAMIC_CONTAINER(dcontainer) == 1, "It should be true");
 	}
 
 
 	TEST(AssigningSTsize) {
-		STL_INIT_D_CONTAINER_ST_SIZE(dcontainer, stack);
-
 		ASSERT(dcontainer.st_size == sizeof(stack), "IT should have this structure size");
 	}
 
-	stl_heapaddr = ((unsigned long) dcontainer.container);
-
-	/* Free the structure */
-	free(dcontainer.container);
-
+	stl_free_container(dcontainer.addr, dcontainer.capacity);	
 } ENDTESTCASE
-
-
 
 
 

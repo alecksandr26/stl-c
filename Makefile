@@ -6,17 +6,12 @@
 %:: %,v
 %:: s.%
 
-define \n
-
-
-endef
-
 C = cc
 AR = ar cr
 
 C_FLAGS = -ggdb -pedantic -Wall 
-C_FLAGS_LIBS = -lexcept
-C_TEST_FLAGS = -lunittest -lexcept
+C_FLAGS_LIBS = -ltc
+C_TEST_FLAGS = -lunittest -ltc
 
 CF = clang-format -i
 
@@ -42,11 +37,18 @@ PROFILES = $(addprefix $(TEST_PROFILE_DIR)/, profile_stack.out)
 OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stl.o   \
 				mem.o   \
-				con.o   \
-				stack.o \
-				queue.o)
+				stack.o\
+				queue.o \
+				array.o\
+				linked.o\
+				init.o)
 
-EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, example_stack.out example_queue.out)
+EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\
+						example_stack.out\
+						example_queue.out\
+						example_array.out\
+						example_linked.out)
+
 LIBS = $(addprefix $(LIB_DIR)/, libstl.a)
 
 .PHONY: all clean format test

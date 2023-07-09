@@ -11,11 +11,14 @@
 #ifndef EX_INCLUDED
 #define EX_INCLUDED
 
-#include <except.h>
+#include <tc.h>
 
 extern Except NotEnoughCapacity;
 extern Except EmptyStructure;
 extern Except NotEnoughMemory;
 extern Except NotEnoughMemoryToRealloc;
+extern Except InvalidIndex;
+extern Except NotEnoughCapacityAtStructure;
+extern Except CapacityAlreadyInitialized;
 
 #endif

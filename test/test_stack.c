@@ -1,7 +1,8 @@
 #include <unittest.h>
-#include <except.h>
+#include <tc.h>
 
 #include "../include/stl/stack.h"
+#include "../include/stl/gen.h"
 #include "../include/stl/ex.h"
 
 TESTCASE(StackStaticAllocation) {
@@ -11,18 +12,18 @@ TESTCASE(StackStaticAllocation) {
 	TEST(TestDefaultCapacity) {
 		stack(float) stack;
 		
-		stack_init(stack); /* Initialize this new stack */
-
-		ASSERT(stack_capacity(stack) == STL_DEFAULT_STACK_CAPACITY,
-		       "stack_capacity(stack) Should return the default capacity");
+		st_init(stack); /* Initialize this new stack */
+		
+		ASSERT(st_capacity(stack) == STL_DEFAULT_STACK_CAPACITY,
+		       "st_capacity(stack) Should return the default capacity");
 	}
 
 	TEST(TestDefinedCapacity) {
 		stack(float, 11) stack;
 
-		stack_init(stack); /* Initialize this new stack */
+		st_init(stack); /* Initialize this new stack */
 		
-		ASSERT(stack_capacity(stack) == 11, "The capacity should be equal 11");
+		ASSERT(st_capacity(stack) == 11, "The capacity should be equal 11");
 	}
 } ENDTESTCASE
 
@@ -31,7 +32,7 @@ TESTCASE(StackAdd) {
 	/* boilerplate code */
 	def_stack(int);
 	stack(int) stack;
-	stack_init(stack);
+	st_init(stack);
 	int top = 0;
 
 	TEST(TrivialAddition) {
@@ -46,13 +47,13 @@ TESTCASE(StackAdd) {
 		try {
 			top = stack_top(stack); /* Should throw an exception */
 			
-			LOG("%zu", stack.head);
+			LOG("%zu", st_size(stack));
 			ASSERT(0, "This should never be executed");
-		} except(EmptyStructure) {
-			top = stack_size(stack);
+		} catch(EmptyStructure) {
+			top = st_size(stack);
 		} endtry;
 		
-		ASSERT(top == 0, "It should be 0 because the stack_size returns 0");
+		ASSERT(top == 0, "It should be 0 because the st_size returns 0");
 	}
 
 	TEST(ExhaustingAddition) {
@@ -60,7 +61,7 @@ TESTCASE(StackAdd) {
 		try {
 			for (int i = 1; i <= STL_DEFAULT_STACK_CAPACITY; i++)
 				stack_push(stack, i);
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 	}
@@ -71,13 +72,13 @@ TESTCASE(StackPoping) {
 	/* boilerplate code */
 	def_stack(int);
 	stack(int) stack;
-	stack_init(stack);
+	st_init(stack);
 
 	TEST(TrivialRemove) {
 		stack_push(stack, 10);
 		(void) stack_pop(stack);
 
-		ASSERT(stack_size(stack) == 0, "Should be zero");
+		ASSERT(st_size(stack) == 0, "Should be zero");
 	}
 
 
@@ -88,8 +89,8 @@ TESTCASE(StackPoping) {
 		try {
 			(void) stack_pop(stack); /* This should raise an exception */
 			ASSERT(0, "This exception should never be executed");
-		} except(EmptyStructure) {
-			ASSERT(stack_size(stack) == 0, "Should be zero");
+		} catch(EmptyStructure) {
+			ASSERT(st_size(stack) == 0, "Should be zero");
 		} endtry;
 	}
 
@@ -101,92 +102,92 @@ TESTCASE(StackPoping) {
 				stack_push(stack, i);
 			for (int i = 1; i <= STL_DEFAULT_STACK_CAPACITY; i++)
 				(void) stack_pop(stack);
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
-		} except(EmptyStructure) {
+		} catch(EmptyStructure) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 
-		ASSERT(stack_size(stack) == 0, "Should be empty the stack");
+		ASSERT(st_size(stack) == 0, "Should be empty the stack");
 	}
 } ENDTESTCASE
 
 TESTCASE(StackDynamic) {
 	def_dstack(float);
-	dstack(float) *stack = new_dstack(float, 10);
-	dstack_init(stack);
+	dstack(float) stack;
+	dst_init(stack, 10);
 	
 	TEST(StackInitDynamic) {
 		try {
-			dstack(float) *stack2 = new_dstack(float, 10);
-			dstack_init(stack2);
-			stl_free(stack2);
-		} except(NotEnoughMemory) {
+			dstack(float) stack2;
+			dst_init(stack2);
+			st_free(stack2);
+		} catch(NotEnoughMemory) {
 			ASSERT(0, "This exception shoulnd't be happening");
 		} endtry;
 	}
 
 
 	TEST(StackDynamicCapacity) {
-		ASSERT(dstack_capacity(stack) >= 10, "Should have the same capacity");
+		ASSERT(st_capacity(stack) >= 10, "Should have the same capacity");
 	}
 
 	TEST(InitializeStack) {
-		ASSERT(dstack_size(stack) == 0, "we Hand't introduce any value");
+		ASSERT(st_size(stack) == 0, "we Hand't introduce any value");
 	}
 	
-	stl_free(stack);
+	st_free(stack);
 } ENDTESTCASE
 
 
 TESTCASE(StackDynamicAdditionRemoving) {
 	def_dstack(float);
-	dstack(float) *stack = new_dstack(float, 10);
-	dstack_init(stack);
+	dstack(float) stack;
+	dst_init(stack, 100);
 
 	TEST(TrivialAddition) {
-		dstack_push(stack, 10.0);
-		ASSERT(dstack_top(stack) == 10.0, "Should be 10");
+		stack_push(stack, 10.0);
+		ASSERT(stack_top(stack) == 10.0, "Should be 10");
 	}
 
 	TEST(TrivialDeletion) {
-		dstack_push(stack, 10.0);
-		(void) dstack_pop(stack);
+		stack_push(stack, 10.0);
+		(void) stack_pop(stack);
 		
-		ASSERT(dstack_size(stack) == 0, "Shold be empty");
+		ASSERT(st_size(stack) == 0, "Shold be empty");
 	}
 
 	TEST(DeletionException) {
 		try {
-			(void) dstack_pop(stack);
+			(void) stack_pop(stack);
 			
 			ASSERT(0, "This assertin should be never exectued");
-		} except(EmptyStructure) {
-			ASSERT(dstack_size(stack) == 0, "Shold be empty");
+		} catch(EmptyStructure) {
+			ASSERT(st_size(stack) == 0, "Shold be empty");
 		} endtry;
 	}
 	
 	TEST(IncreasingWithAddition) {
 		try {
 			for (int i = 1; i <= 100; i++)
-				dstack_push(stack, i);
+				stack_push(stack, (float) i);
 			for (int i = 1; i <= 100; i++)
-				(void) dstack_pop(stack);
-		} except(NotEnoughMemory) {
+				(void) stack_pop(stack);
+		} catch(NotEnoughMemory) {
 			ASSERT(0, "This exception should never be executed");
-		} except(NotEnoughCapacity) {
+		} catch(NotEnoughCapacity) {
 			ASSERT(0, "This exception should never be executed");
 		} endtry;
 	}
 
-	stl_free(stack);
+	st_free(stack);
 } ENDTESTCASE
 
 
 TESTCASE(TestingStackPtr) {
 	def_stack(d_ptr(float));
 	stack(d_ptr(float)) stack;
-	stack_init(stack);
+	st_init(stack);
 	float var = 2.0;
 	
 	TEST(TrivialAddition) {
@@ -197,8 +198,8 @@ TESTCASE(TestingStackPtr) {
 	TEST(TrivialDeletion) {
 		stack_push(stack, &var);
 		ASSERT(*stack_pop(stack) == 2.0, "The Poped Should be 2.0");
-		ASSERT(stack_size(stack) == 0, "Should be empty");
-		ASSERT(stack_empty(stack) == 1, "Should be empty");
+		ASSERT(st_size(stack) == 0, "Should be empty");
+		ASSERT(st_empty(stack) == 1, "Should be empty");
 	}
 } ENDTESTCASE
 
