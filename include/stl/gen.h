@@ -10,38 +10,35 @@
 #ifndef GEN_INCLUDED
 #define GEN_INCLUDED
 
-#include <string.h>
-#include <tc.h>
-
 #include "mem.h"
 #include "con.h"
 #include "def.h"
+#include "init.h"
 
 #define st_empty(st) ((st).con.size == 0)
 #define st_size(st) ((st).con.size)
 #define st_capacity(st) ((st).con.capacity)
 
-#define st_new(st_dtype)			\
+#define new_st(st_dtype)					\
 	(typeof(st_dtype) *) stl_alloc_struct(sizeof(st_dtype))
 
-#define dst_init(st, ...)						\
+#define init_dst(st, ...)						\
 	do {								\
 		STL_INIT_DCONTAINER((st).con, typeof((st).con.container[0]), \
 				    st, __STL_CONTAINER_SELECT_CAPACITY(__VA_ARGS__ \
 									__VA_OPT__(,) \
 									STL_DEFAULT_CONTAINER_CAPACITY)); \
-		memset(&(st), 0, sizeof(st) - sizeof((st).con));	\
+		__stl_initialize_st(st);				\
 	} while (0)
 
-#define st_init(st)							\
+#define init_st(st)							\
 	do {								\
 		STL_INIT_CONTAINER((st).con, typeof((st).con.container[0]), st, \
 				   sizeof((st).con.container) / sizeof((st).con.container[0]));	\
-		memset(&(st), 0, sizeof(st) - sizeof((st).con));	\
+		__stl_initialize_st(st);				\
 	} while (0)
 
-
-#define st_free(st)							\
+#define stl_free(st)							\
 	do {								\
 		if (STL_IS_DYNAMIC_CONTAINER((st).con))			\
 			stl_free_container((st).con.addr, (st).con.capacity); \

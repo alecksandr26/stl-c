@@ -46,7 +46,7 @@ void print_attributes_queue(dqueue(int) *queue)
 void example_static_queue_float(void)
 { 
  	queue(float, 10) queue;
-	st_init(queue);
+	init_st(queue);
 
 
  	for (int i = 1; i <= 10; i++) 
@@ -70,7 +70,7 @@ void example_static_queue_float(void)
 void example_static_queue_ptr_float(void)
 { 
 	queue(d_ptr(float), 100) queue;
-	st_init(queue);
+	init_st(queue);
 	
 	print_attributes_queue_100(&queue);
 
@@ -97,7 +97,7 @@ void example_abstra_data_types(void)
 	
 	queue(person) p_queue;
 	
-	st_init(p_queue);
+	init_st(p_queue);
 
 	person p1 = { .age = 10, .name = "James"};
 	person p2 = { .age = 12, .name = "Lois"};
@@ -129,7 +129,7 @@ void example_abstra_data_types_ptr(void)
 	
 	queue(d_ptr(person)) p_queue;
 	
-	st_init(p_queue);
+	init_st(p_queue);
 
 	person p1 = { .age = 10, .name = "James"};
 	person p2 = { .age = 12, .name = "Lois"};
@@ -152,8 +152,8 @@ void example_abstra_data_types_ptr(void)
 
 void example_dqueue_ptr_float(void)
 {
-	dqueue(d_ptr(float)) *dqueue = st_new(dqueue(d_ptr(float)));
-	dst_init(*dqueue);
+	dqueue(d_ptr(float)) *dqueue = new_st(dqueue(d_ptr(float)));
+	init_dst(*dqueue);
 	
 	float var = 1.0, var2 = 2.0, var3 = 3.0, var4 = 4.0, var5 = 5.0;
 	
@@ -198,13 +198,13 @@ void example_dqueue_ptr_float(void)
 	printf("%f\n", *queue_back(*dqueue));
 	
 		
-	st_free(*dqueue);
+	stl_free(*dqueue);
 }
 
 int main() 
 {
 	dqueue(int) dq;
-	dst_init(dq, 100);
+	init_dst(dq, 100);
 
 	queue_push(dq, 10);
 	queue_push(dq, 20);
@@ -234,7 +234,7 @@ int main()
 	
 	example_dqueue_ptr_float();
 
-	st_free(dq);
+	stl_free(dq);
 	
 	return 0;
 }

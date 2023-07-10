@@ -12,7 +12,7 @@ TESTCASE(StackStaticAllocation) {
 	TEST(TestDefaultCapacity) {
 		stack(float) stack;
 		
-		st_init(stack); /* Initialize this new stack */
+		init_st(stack); /* Initialize this new stack */
 		
 		ASSERT(st_capacity(stack) == STL_DEFAULT_STACK_CAPACITY,
 		       "st_capacity(stack) Should return the default capacity");
@@ -21,7 +21,7 @@ TESTCASE(StackStaticAllocation) {
 	TEST(TestDefinedCapacity) {
 		stack(float, 11) stack;
 
-		st_init(stack); /* Initialize this new stack */
+		init_st(stack); /* Initialize this new stack */
 		
 		ASSERT(st_capacity(stack) == 11, "The capacity should be equal 11");
 	}
@@ -32,7 +32,7 @@ TESTCASE(StackAdd) {
 	/* boilerplate code */
 	def_stack(int);
 	stack(int) stack;
-	st_init(stack);
+	init_st(stack);
 	int top = 0;
 
 	TEST(TrivialAddition) {
@@ -47,7 +47,6 @@ TESTCASE(StackAdd) {
 		try {
 			top = stack_top(stack); /* Should throw an exception */
 			
-			LOG("%zu", st_size(stack));
 			ASSERT(0, "This should never be executed");
 		} catch(EmptyStructure) {
 			top = st_size(stack);
@@ -72,7 +71,7 @@ TESTCASE(StackPoping) {
 	/* boilerplate code */
 	def_stack(int);
 	stack(int) stack;
-	st_init(stack);
+	init_st(stack);
 
 	TEST(TrivialRemove) {
 		stack_push(stack, 10);
@@ -115,13 +114,13 @@ TESTCASE(StackPoping) {
 TESTCASE(StackDynamic) {
 	def_dstack(float);
 	dstack(float) stack;
-	dst_init(stack, 10);
+	init_dst(stack, 10);
 	
 	TEST(StackInitDynamic) {
 		try {
 			dstack(float) stack2;
-			dst_init(stack2);
-			st_free(stack2);
+			init_dst(stack2);
+			stl_free(stack2);
 		} catch(NotEnoughMemory) {
 			ASSERT(0, "This exception shoulnd't be happening");
 		} endtry;
@@ -136,14 +135,14 @@ TESTCASE(StackDynamic) {
 		ASSERT(st_size(stack) == 0, "we Hand't introduce any value");
 	}
 	
-	st_free(stack);
+	stl_free(stack);
 } ENDTESTCASE
 
 
 TESTCASE(StackDynamicAdditionRemoving) {
 	def_dstack(float);
 	dstack(float) stack;
-	dst_init(stack, 100);
+	init_dst(stack, 100);
 
 	TEST(TrivialAddition) {
 		stack_push(stack, 10.0);
@@ -180,14 +179,14 @@ TESTCASE(StackDynamicAdditionRemoving) {
 		} endtry;
 	}
 
-	st_free(stack);
+	stl_free(stack);
 } ENDTESTCASE
 
 
 TESTCASE(TestingStackPtr) {
 	def_stack(d_ptr(float));
 	stack(d_ptr(float)) stack;
-	st_init(stack);
+	init_st(stack);
 	float var = 2.0;
 	
 	TEST(TrivialAddition) {

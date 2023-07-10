@@ -40,7 +40,8 @@ OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stack.o\
 				queue.o \
 				array.o\
-				linked.o)
+				linked.o\
+				init.o)
 
 EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\
 						example_stack.out\
