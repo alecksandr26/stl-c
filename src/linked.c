@@ -1,5 +1,6 @@
-
+#include <stdio.h>
 #include <assert.h>
+
 #include "../include/stl/linked.h"
 #include "../include/stl/gen.h"
 #include "../include/stl/ex.h"
@@ -42,7 +43,7 @@ __stl_link_node_t *__stl_linked_ins_after_byindex(__stl_linked_t *linked, int in
 		st_capacity(*linked) = st_capacity(*linked) * STL_DEFAULT_DLINKED_INCREASE_RATE;
 	}
 	
-	__stl_link_node_t *curr;
+	__stl_link_node_t *curr, *ins_addr, *addr_next;;
 	int curr_index;
 
 	if (linked->deleted_head == -1) {
@@ -57,11 +58,16 @@ __stl_link_node_t *__stl_linked_ins_after_byindex(__stl_linked_t *linked, int in
 
 	curr->prev = curr->next = -1;
 	if (index != -1) {	/* Link prev */
+		ins_addr = (__stl_link_node_t *) (linked->con.addr
+						  + (index * linked->con.dtype_size));
 		curr->prev = index;
-		curr->next = ((__stl_link_node_t *) (linked->con.addr
-						     + (index * linked->con.dtype_size)))->next;
-		((__stl_link_node_t *) (linked->con.addr
-					+ (index * linked->con.dtype_size)))->next = curr_index;
+		if (ins_addr->next != -1) {
+			addr_next = (__stl_link_node_t *) (linked->con.addr
+							   + (ins_addr->next * linked->con.dtype_size));
+			addr_next->prev = curr_index;
+			curr->next = ins_addr->next;
+		}
+		ins_addr->next = curr_index;
 	} else
 		linked->front = linked->back = 0;
 
@@ -91,7 +97,7 @@ __stl_link_node_t *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int ind
 		st_capacity(*linked) = st_capacity(*linked) * STL_DEFAULT_DLINKED_INCREASE_RATE;
 	}
 	
-	__stl_link_node_t *curr;
+	__stl_link_node_t *curr, *ins_addr, *addr_prev;
 	int curr_index;
 
 	if (linked->deleted_head == -1) {
@@ -106,11 +112,15 @@ __stl_link_node_t *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int ind
 	
 	curr->prev = curr->next = -1;
 	if (index != -1) {	/* Link prev */
+		ins_addr = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
 		curr->next = index;
-		curr->prev = ((__stl_link_node_t *) (linked->con.addr
-						     + (index * linked->con.dtype_size)))->prev;
-		((__stl_link_node_t *) (linked->con.addr
-					+ (index * linked->con.dtype_size)))->prev = curr_index;
+		if (ins_addr->prev != -1 ) {
+			curr->prev = ins_addr->prev;
+			addr_prev = (__stl_link_node_t *) (linked->con.addr
+							   + (ins_addr->prev * linked->con.dtype_size));
+			addr_prev->next = curr_index;
+		}
+		ins_addr->prev = curr_index;
 	} else
 		linked->front = linked->back = 0;
 
@@ -121,11 +131,11 @@ __stl_link_node_t *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int ind
 	return curr;
 }
 
-__stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t index)
+__stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t physical_index)
 {
 	assert(linked != NULL);
 
-	if (st_size(*linked) <= index)
+	if (st_capacity(*linked) <= physical_index)
 		throw(InvalidIndex);
 	
 	if (linked->con.type == STL_DYNAMIC
@@ -140,7 +150,7 @@ __stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t index
 
 	__stl_link_node_t *curr;
 	int next_index, prev_index;
-	curr = (__stl_link_node_t *) (linked->con.addr + (index * linked->con.dtype_size));
+	curr = (__stl_link_node_t *) (linked->con.addr + (physical_index * linked->con.dtype_size));
 
 	next_index = curr->next;
 	prev_index = curr->prev;
@@ -149,7 +159,7 @@ __stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t index
 		__stl_link_node_t *next = (__stl_link_node_t *) (linked->con.addr
 								 + (next_index * linked->con.dtype_size));
 		next->prev = curr->prev;
-		if (index == (size_t) linked->front)
+		if (physical_index == (size_t) linked->front)
 			linked->front = next_index;
 	}
 
@@ -157,13 +167,13 @@ __stl_link_node_t *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t index
 		__stl_link_node_t *prev = (__stl_link_node_t *) (linked->con.addr
 								 + (prev_index * linked->con.dtype_size));
 		prev->next = curr->next;
-		if (index == (size_t) linked->back)
+		if (physical_index == (size_t) linked->back)
 			linked->back = prev_index;
 	}
 
 	/* Link the deleted cells */
 	curr->next = linked->deleted_head;
-	linked->deleted_head = index;
+	linked->deleted_head = physical_index;
 
 	st_size(*linked)--;
 	return curr;

@@ -209,7 +209,7 @@ TESTCASE(ArrayDeletion) {
 				array_rem(arr, irand);
 			} catch(InvalidIndex) {
 				ASSERT(0, "Should be able to do handle exhausting");
-			} catch(InvalidIndex) {
+			} catch(EmptyStructure) {
 				ASSERT(0, "Should be able to do handle exhausting");
 			} endtry;
 

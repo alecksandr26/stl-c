@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include "../include/stl/linked.h"
 #include "../include/stl/gen.h"
 
@@ -91,6 +92,21 @@ void example_dynamic(void)
 int main(void)
 {
 	example_dynamic();
+	
+	def_linked(int);
+	linked(int) l;
+	init_st(l);
+
+	linked_push_back(l, 1);
+	linked_push_back(l, 3);
+	linked_push_back(l, 4);
+	
+
+	linked_ins(l, 1, 2);
+	
+	assert(linked_at(l, 1) == 2);
+	
+	
 	
 	return 0;
 }
