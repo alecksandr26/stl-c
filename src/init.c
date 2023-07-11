@@ -27,8 +27,13 @@ void __stl_initialize_queue(void *st)
 	queue->front = queue->rear = 0;
 }
 
-
 void __stl_initialize_array(void *st)
 {
 	assert(st != NULL);
 }
+
+void __stl_initialize_map(void *st)
+{
+	assert(st != NULL);
+}
+
