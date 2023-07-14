@@ -16,9 +16,9 @@
 extern unsigned long stl_heapaddr;
 
 extern unsigned char *stl_alloc_struct(size_t st_size);
-extern unsigned char *stl_alloc_container(size_t container_size);
-extern unsigned char *stl_realloc_container(unsigned char *container_ptr, size_t new_container_size);
-extern void stl_free_container(unsigned char *container_ptr, size_t container_size);
+extern unsigned char *stl_alloc_container(size_t container_capacity);
+extern unsigned char *stl_realloc_container(unsigned char *container_ptr, size_t new_container_capacity);
+extern void stl_free_container(unsigned char *container_ptr, size_t container_capacity);
 extern void stl_free_struct(unsigned char *st_ptr);
 
 #endif

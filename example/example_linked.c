@@ -97,16 +97,14 @@ int main(void)
 	linked(int) l;
 	init_st(l);
 
-	linked_push_back(l, 1);
-	linked_push_back(l, 3);
-	linked_push_back(l, 4);
+	linked_push_back(l, 10);
+	linked_push_back(l, 20);
+	linked_push_back(l, 30);
+	linked_push_back(l, 40);
+	linked_push_back(l, 50);
+
 	
 
-	linked_ins(l, 1, 2);
-	
-	assert(linked_at(l, 1) == 2);
-	
-	
 	
 	return 0;
 }

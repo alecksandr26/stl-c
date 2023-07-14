@@ -44,6 +44,7 @@
 			stl_free_container((st).con.addr, (st).con.capacity); \
 		if (((unsigned long) &(st)) < stl_heapaddr)		\
 			stl_free_struct((unsigned char *) &(st));	\
+		__stl_destroy_st(st);					\
 	} while (0)
 
 #endif

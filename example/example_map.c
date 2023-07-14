@@ -5,16 +5,12 @@
 
 int main(void)
 {
-	def_dmap(int, int);
-	dmap(int, int) m;
-	init_dst(m, 100);
-	
-	printf("%zu\n", m.con.dtype_size);
-	init_st(m.con.container[0]);
-	printf("%zu\n", m.con.container[0].con.dtype_size);
+	def_map(int, int);
+	map(int, int) m;
+	init_st(m);
 
-
-	stl_free(m);
+	map_ins(m, 10, 4);
+	map_ins(m, 10, 5);
 	
 	
 	return 0;

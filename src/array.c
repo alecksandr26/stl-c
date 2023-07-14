@@ -94,3 +94,26 @@ size_t __stl_array_at(__stl_array_t *array, size_t index)
 
 	return index;
 }
+
+void __stl_array_begin(__stl_array_t *array, __stl_iter_t *iter)
+{
+	assert(array != NULL);
+	assert(iter != NULL);
+
+	iter->st = (unsigned char *) array;
+	iter->pos = 0;
+	iter->type = STL_ITERATING_ARRAY;
+	iter->index = 0;
+}
+
+void __stl_array_end(__stl_array_t *array, __stl_iter_t *iter)
+{
+	assert(array != NULL);
+	assert(iter != NULL);
+	
+	iter->st = (unsigned char *) array;
+	iter->pos = st_size(*array) - 1;
+	iter->type = STL_ITERATING_ARRAY;
+	iter->index = st_size(*array) - 1;
+}
+

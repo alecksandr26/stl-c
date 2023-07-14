@@ -68,7 +68,7 @@ typedef struct {
 		(con).dtype_size = sizeof(dtype);			\
 		(con).st_size = sizeof(st);				\
 		(con).addr = (unsigned char *) (con).container;		\
-		(con).type = (sizeof(con) > STL_CONTAINER_SIZE) ? STL_STATIC : STL_DYNAMIC; \
+		(con).type = STL_STATIC;				\
  		(con).capacity = c;					\
 	} while (0)
 
@@ -82,7 +82,7 @@ typedef struct {
 		(con).dtype_size = sizeof(dtype);			\
 		(con).st_size = sizeof(st);				\
 		(con).addr = (unsigned char *) (con).container;		\
-		(con).type = (STL_IS_DYNAMIC_CONTAINER(con)) ? STL_DYNAMIC : STL_STATIC; \
+		(con).type = STL_DYNAMIC;				\
  		(con).capacity = c;					\
 	} while (0)
 

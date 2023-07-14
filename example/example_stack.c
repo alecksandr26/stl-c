@@ -33,7 +33,8 @@ void example_float(void)
 	puts("Static structrue");
 
 	stack(float, 100) stack;
-	init_st(stack);
+	init_st(stack);	
+	
 	prints_attributes(&stack);
 	
 	puts("Pushig...");

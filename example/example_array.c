@@ -9,11 +9,12 @@ int main(void)
 	puts("Static structure");
 	def_array(int);
 	array(int) arr;
-	st_init(arr);
-
-	array_append(arr, 10);
-	array_append(arr, 20);
-	array_append(arr, 30);
+	init_st(arr);
+	
+	
+	array_push(arr, 10);
+	array_push(arr, 20);
+	array_push(arr, 30);
 
 	array_ins(arr, 1, 40);
 	
@@ -31,10 +32,10 @@ int main(void)
 
 	def_darray(int);
 	darray(int) da;
-	dst_init(da, 100);
+	init_dst(da, 100);
 
 	for (size_t i = 0; i < 50; i++)
-		array_append(da, i);
+		array_push(da, i);
 
 	printf("%i\n", array_back(da));
 	printf("capacity: %zu | size: %zu\n", st_capacity(da), st_size(da));
@@ -42,7 +43,7 @@ int main(void)
 	printf("%i\n", array_back(da));
 	printf("capacity: %zu | size: %zu\n", st_capacity(da), st_size(da));
 	
-	st_free(da);
+	stl_free(da);
 	
 	return 0;
 }

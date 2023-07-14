@@ -20,5 +20,9 @@ extern Except NotEnoughMemoryToRealloc;
 extern Except InvalidIndex;
 extern Except NotEnoughCapacityAtStructure;
 extern Except CapacityAlreadyInitialized;
+extern Except InvalidKey;
+extern Except UninitializedIter;
+extern Except LastElementReached;
+extern Except PointingToNullValue;
 
 #endif

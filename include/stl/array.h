@@ -7,7 +7,6 @@
   @license This project is released under the MIT License
 */
 
-
 #ifndef ARRAY_INCLUDED
 #define ARRAY_INCLUDED
 
@@ -15,6 +14,7 @@
 #include "mem.h"
 #include "def.h"
 #include "init.h"
+#include "iter.h"
 
 #define STL_DEFAULT_ARRAY_CAPACITY STL_DEFAULT_CONTAINER_CAPACITY
 #define STL_DEFAULT_DARRAY_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
@@ -105,10 +105,18 @@ typedef struct {
 #define array_back(array)			\
 	array.con.container[__stl_array_at((__stl_array_t *) &(array), st_size(array) - 1)]
 
+#define array_begin(array, iter)					\
+	__stl_array_begin((__stl_array_t *) &(array), (__stl_iter_t *) &(iter))
+
+#define array_end(array, iter)						\
+	__stl_array_end((__stl_array_t *) &(array), (__stl_iter_t *) &(iter))
+
 extern unsigned char *__stl_array_insert_byindex(__stl_array_t *array, size_t ind);
 extern unsigned char *__stl_array_pop(__stl_array_t *array);
 extern void __stl_array_rem(__stl_array_t *array, size_t ind);
 extern size_t __stl_array_at(__stl_array_t *array, size_t index);
+extern void __stl_array_begin(__stl_array_t *array, __stl_iter_t *iter);
+extern void __stl_array_end(__stl_array_t *array, __stl_iter_t *iter);
 
 #endif
 
