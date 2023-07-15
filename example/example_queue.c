@@ -2,16 +2,17 @@
 #include <string.h>
 #include "../include/stl/queue.h"
 #include "../include/stl/gen.h"
+#include "../include/stl/def.h"
 
 def_queue(float, 10);
 def_dqueue(int);
 def_dqueue(float);
 
-def_queue(d_ptr(float), 100);
-def_dqueue(d_ptr(float));
+def_queue(ptr(float), 100);
+def_dqueue(ptr(float));
 
 
-void print_attributes_queue_100(queue(d_ptr(float), 100) *queue) 
+void print_attributes_queue_100(queue(ptr(float), 100) *queue) 
 { 
  	printf("size: %zu\n", st_size(*queue));
  	printf("capacity: %zu\n", st_capacity(*queue)); 
@@ -27,7 +28,7 @@ void print_attributes_queue_10(queue(float, 10) *queue)
  	printf("front: %zu\n", queue->front);
 }
 
-void print_attributes_dqueue(dqueue(d_ptr(float)) *dqueue)
+void print_attributes_dqueue(dqueue(ptr(float)) *dqueue)
 {
 	printf("size: %zu\n", st_size(*dqueue)); 
  	printf("capacity: %zu\n", st_capacity(*dqueue));
@@ -69,7 +70,7 @@ void example_static_queue_float(void)
 
 void example_static_queue_ptr_float(void)
 { 
-	queue(d_ptr(float), 100) queue;
+	queue(ptr(float), 100) queue;
 	init_st(queue);
 	
 	print_attributes_queue_100(&queue);
@@ -125,9 +126,9 @@ void example_abstra_data_types_ptr(void)
 		char name[100];
 	} person;
 
-	def_queue(d_ptr(person));
+	def_queue(ptr(person));
 	
-	queue(d_ptr(person)) p_queue;
+	queue(ptr(person)) p_queue;
 	
 	init_st(p_queue);
 
@@ -152,7 +153,7 @@ void example_abstra_data_types_ptr(void)
 
 void example_dqueue_ptr_float(void)
 {
-	dqueue(d_ptr(float)) *dqueue = new_st(dqueue(d_ptr(float)));
+	dqueue(ptr(float)) *dqueue = new_st(dqueue(ptr(float)));
 	init_dst(*dqueue);
 	
 	float var = 1.0, var2 = 2.0, var3 = 3.0, var4 = 4.0, var5 = 5.0;

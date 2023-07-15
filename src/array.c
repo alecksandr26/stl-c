@@ -4,7 +4,7 @@
 #include <string.h>
 #include "../include/stl/array.h"
 #include "../include/stl/gen.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 
 unsigned char *__stl_array_insert_byindex(__stl_array_t *array, size_t ind)
 {

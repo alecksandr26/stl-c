@@ -24,5 +24,7 @@ extern Except InvalidKey;
 extern Except UninitializedIter;
 extern Except LastElementReached;
 extern Except PointingToNullValue;
+extern Except KeyNotFound;
+extern Except KeyAlreadyExist;
 
 #endif

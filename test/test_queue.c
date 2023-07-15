@@ -1,7 +1,8 @@
 #include <unittest.h>
 #include "../include/stl/queue.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 #include "../include/stl/gen.h"
+#include "../include/stl/def.h"
 
 TESTCASE(InitStaticQueue) {
 	def_queue(int);
@@ -228,8 +229,8 @@ TESTCASE(DynamicQueueDeleting) {
 
 
 TESTCASE(TestingQueuePointerSupport) {
-	def_queue(d_ptr(float));
-	queue(d_ptr(float)) queue;
+	def_queue(ptr(float));
+	queue(ptr(float)) queue;
 	init_st(queue);
 	float var = 2.0;
 	

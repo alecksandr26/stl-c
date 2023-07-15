@@ -36,13 +36,11 @@ PROFILES = $(addprefix $(TEST_PROFILE_DIR)/, profile_stack.out)
 
 OBJS = $(addprefix $(OBJ_DIR)/, 	\
 				stl.o   \
-				mem.o   \
 				stack.o\
 				queue.o \
 				array.o\
 				linked.o\
 				map.o\
-				init.o\
 				iter.o)
 
 EXAMPLES = $(addprefix $(BIN_EXAMPLE_DIR)/, 	\

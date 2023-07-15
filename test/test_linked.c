@@ -5,7 +5,7 @@
 
 #include "../include/stl/linked.h"
 #include "../include/stl/gen.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 
 TESTCASE(LinkedStaticAllocation) {
 	def_linked(int, 11);

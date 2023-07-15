@@ -39,7 +39,7 @@ int main(void)
 
 	printf("%i\n", array_back(da));
 	printf("capacity: %zu | size: %zu\n", st_capacity(da), st_size(da));
-	array_pop(da);
+	(void) array_pop(da);
 	printf("%i\n", array_back(da));
 	printf("capacity: %zu | size: %zu\n", st_capacity(da), st_size(da));
 	

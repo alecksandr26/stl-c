@@ -3,7 +3,7 @@
 #include <tc.h>
 
 #include "../include/stl/iter.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 #include "../include/stl/linked.h"
 #include "../include/stl/array.h"
 #include "../include/stl/gen.h"

@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdarg.h>
 
 #include "../include/stl/linked.h"
 #include "../include/stl/gen.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 #include "../include/stl/iter.h"
 
 size_t __stl_linked_front(__stl_linked_t *linked)
@@ -110,6 +111,7 @@ unsigned char *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int index)
 		linked->deleted_head = links[curr].next;
 	}
 
+	links[curr].next = links[curr].prev = -1;
 	if (st_size(*linked) != 0) {
 		links[curr].next = index;
 		if (links[index].prev != -1 ) {
@@ -185,22 +187,17 @@ size_t __stl_linked_at(__stl_linked_t *linked, size_t index)
 	if (st_size(*linked) <= index)
 		throw(InvalidIndex);
 
-	size_t c1, c2;
-	int front, back;
-	__stl_link_node_t *links = linked->links;
-	front = linked->front;
-	back = linked->back;
+
+	__stl_iter_t back, front;
+	linked_begin(*linked, front);
+	linked_end(*linked, back);
 	
-	c1 = 0;
-	c2 = st_size(*linked) - 1;
-	while (c1 != index && c2 != index) {
-		front = links[front].next;
-		back = links[back].prev;
-		c1++;
-		c2--;
+	while (iter_index(front) != (int) index && iter_index(back) != (int) index) {
+		iter_next(front);
+		iter_prev(back);
 	}
 
-	return (c1 == index) ? front : back;
+	return (size_t) (iter_index(front) == (int) index) ? front.pos : back.pos;
 }
 
 void __stl_linked_begin(__stl_linked_t *linked, __stl_iter_t *iter)
@@ -224,5 +221,29 @@ void __stl_linked_end(__stl_linked_t *linked, __stl_iter_t *iter)
 	iter->type = STL_ITERATING_LINKED;
 	iter->index = st_size(*linked) - 1;
 }
+
+
+int __stl_linked_find(__stl_linked_t *linked,
+		      int memcmp(unsigned char *item1, unsigned char *item2, size_t item_size),
+		      unsigned char *item)
+{
+	assert(linked != NULL);
+
+	__stl_iter_t back, front;
+	linked_begin(*linked, front);
+	linked_end(*linked, back);
+	
+	while (iter_index(front) <= iter_index(back)) {
+		if (memcmp(__stl_iter_data(&front), item, linked->con.dtype_size) == 0)
+			return iter_index(front);
+		iter_next(front);
+		if (memcmp(__stl_iter_data(&back), item, linked->con.dtype_size) == 0)
+			return iter_index(back);
+		iter_prev(back);
+	}
+	
+	return -1;
+}
+
 
 

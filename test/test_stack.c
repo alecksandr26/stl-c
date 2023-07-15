@@ -3,7 +3,8 @@
 
 #include "../include/stl/stack.h"
 #include "../include/stl/gen.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
+#include "../include/stl/def.h"
 
 TESTCASE(StackStaticAllocation) {
 	def_stack(float, 11);
@@ -184,8 +185,8 @@ TESTCASE(StackDynamicAdditionRemoving) {
 
 
 TESTCASE(TestingStackPtr) {
-	def_stack(d_ptr(float));
-	stack(d_ptr(float)) stack;
+	def_stack(ptr(float));
+	stack(ptr(float)) stack;
 	init_st(stack);
 	float var = 2.0;
 	

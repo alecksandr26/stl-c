@@ -103,6 +103,8 @@ int main(void)
 	linked_push_back(l, 40);
 	linked_push_back(l, 50);
 
+	int item_to_find = 30;
+	printf("%i\n", linked_find(l, item_to_find));
 	
 
 	

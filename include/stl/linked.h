@@ -10,11 +10,14 @@
 #ifndef LINKED_INCLUDED
 #define LINKED_INCLUDED
 
+#include <stdarg.h>
+
 #include "con.h"
 #include "mem.h"
-#include "def.h"
+#include "if.h"
 #include "init.h"
 #include "iter.h"
+#include "def.h"
 
 #define STL_DEFAULT_LINKED_CAPACITY STL_DEFAULT_CONTAINER_CAPACITY
 #define STL_DEFAULT_DLINKED_INCREASE_RATE STL_DEFAULT_DCONTAINER_INCREASE_RATE
@@ -151,12 +154,20 @@ typedef struct {
 #define linked_end(linked, iter)					\
 	__stl_linked_end((__stl_linked_t *) &(linked), (__stl_iter_t *) &(iter))
 
+#define linked_find(linked, val_to_find, ...)				\
+	__stl_linked_find((__stl_linked_t *) &(linked),			\
+			  __STL_FIRST(__VA_ARGS__ __VA_OPT__(,) stl_memcmp), \
+			  (unsigned char *) &(val_to_find))		\
+
 extern unsigned char *__stl_linked_ins_after_byindex(__stl_linked_t *linked, int index);
 extern unsigned char *__stl_linked_ins_prev_byindex(__stl_linked_t *linked, int index);
 extern unsigned char *__stl_linked_rem_byindex(__stl_linked_t *linked, size_t curr);
 extern size_t __stl_linked_front(__stl_linked_t *linked);
 extern size_t __stl_linked_back(__stl_linked_t *linked);
 extern size_t __stl_linked_at(__stl_linked_t *linked, size_t index);
+extern int __stl_linked_find(__stl_linked_t *linked,
+			     int memcmp(unsigned char *item1, unsigned char *item2, size_t item_size),
+			     unsigned char *item);
 extern void __stl_linked_begin(__stl_linked_t *linked, __stl_iter_t *iter);
 extern void __stl_linked_end(__stl_linked_t *linked, __stl_iter_t *iter);
 

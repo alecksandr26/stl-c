@@ -2,12 +2,13 @@
 
 #include "../include/stl/stack.h"
 #include "../include/stl/gen.h"
+#include "../include/stl/def.h"
 
 mul_def_stack(float, 1, 2, 10, 11, 100);
 
 /* define a dynamic stack */
 mul_def_dstack(float, int);
-def_dstack(d_ptr(float));
+def_dstack(ptr(float));
 
 void prints_attributes(stack(float, 100) *stack)
 {
@@ -104,9 +105,9 @@ void example_dynamic(void)
 
 int main()
 {
-	def_stack(d_ptr(float));
+	def_stack(ptr(float));
 
-	stack(d_ptr(float)) stack;
+	stack(ptr(float)) stack;
 	init_st(stack);
 
 	printf("%p\n", (void *) stack.con.container);
@@ -122,8 +123,8 @@ int main()
 
 	example_float();
 	
-	def_stack(d_ptr(float), 100);
-	stack(d_ptr(float), 100) *stack_ptr = new_st(stack(d_ptr(float), 100));
+	def_stack(ptr(float), 100);
+	stack(ptr(float), 100) *stack_ptr = new_st(stack(ptr(float), 100));
 	init_st(*stack_ptr);
 
 	stack_push(*stack_ptr, &var1);

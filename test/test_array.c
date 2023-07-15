@@ -5,7 +5,7 @@
 
 #include "../include/stl/array.h"
 #include "../include/stl/gen.h"
-#include "../include/stl/ex.h"
+#include "../include/stl/except.h"
 
 TESTCASE(ArrayStaticAllocation) {
 	def_array(int, 11);
